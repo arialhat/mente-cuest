@@ -1,0 +1,301 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 09 | Memoria lectora</title>
+<style>
+:root {
+    --fondo: #080b09;
+    --panel: #121a15;
+    --verde: #39ff88;
+    --texto: #edf5ef;
+    --gris: #a6b3a9;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    padding: 20px;
+    background: radial-gradient(circle at top, #193522, var(--fondo) 65%);
+    color: var(--texto);
+    font-family: Arial, sans-serif;
+}
+.contenedor { max-width: 850px; margin: auto; }
+header { text-align: center; margin-bottom: 24px; }
+.etiqueta { color: var(--verde); letter-spacing: 3px; font-size: 12px; }
+h1 { font-size: clamp(28px, 5vw, 42px); margin: 12px 0; }
+p { line-height: 1.6; }
+.panel {
+    background: var(--panel);
+    border: 1px solid #344b3a;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 18px;
+}
+.estadisticas {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: var(--gris);
+}
+.estadisticas strong { color: var(--verde); }
+.tablero {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 22px;
+}
+.tarjeta {
+    min-height: 110px;
+    padding: 8px;
+    border: 1px solid #52705b;
+    border-radius: 10px;
+    background: #19251d;
+    color: var(--verde);
+    font-size: 26px;
+    font-weight: bold;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+    transition: transform .15s, background .15s;
+}
+.tarjeta:hover { transform: translateY(-2px); }
+.tarjeta.revelada, .tarjeta.encontrada {
+    background: #263b2c;
+    color: var(--texto);
+    font-size: 13px;
+    line-height: 1.4;
+}
+.tarjeta.encontrada {
+    border: 2px solid var(--verde);
+    cursor: default;
+}
+.tarjeta:disabled { opacity: 1; }
+button.accion, a.accion {
+    display: inline-block;
+    border: 1px solid var(--verde);
+    border-radius: 7px;
+    padding: 12px 17px;
+    background: var(--verde);
+    color: #071009;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+.secundario { background: transparent !important; color: var(--texto) !important; border-color: #526057 !important; }
+.controles { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+#mensaje { min-height: 26px; color: var(--gris); }
+#resultado {
+    display: none;
+    border: 1px solid var(--verde);
+    background: #102017;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 18px;
+}
+#resultado h2 { color: var(--verde); }
+.pie { text-align: center; color: #8b9a8e; font-size: 12px; margin: 25px 0; }
+@media(max-width: 500px) {
+    body { padding: 10px; }
+    .panel { padding: 12px; }
+    .tablero { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+    .tarjeta { min-height: 100px; }
+    .controles > * { width: 100%; text-align: center; }
+}
+</style>
+</head>
+<body>
+<div class="contenedor">
+<header>
+    <div class="etiqueta">MENTE QUEST // ENTRENAMIENTO COGNITIVO</div>
+    <h1>Memoria lectora</h1>
+    <p>Encuentra las seis parejas de conceptos y definiciones. ¡Recuerda dónde aparece cada tarjeta!</p>
+</header>
+
+<section class="panel">
+    <div class="estadisticas">
+        <span>PAREJAS: <strong id="parejas">0/6</strong></span>
+        <span>INTENTOS: <strong id="intentos">0</strong></span>
+        <span>TIEMPO: <strong id="tiempo">0 s</strong></span>
+    </div>
+
+    <p>Selecciona dos tarjetas. Si tienen relación, quedarán descubiertas. Si no coinciden, se ocultarán otra vez.</p>
+
+    <div class="tablero" id="tablero"></div>
+    <p id="mensaje" role="status" aria-live="polite">Pulsa una tarjeta para comenzar.</p>
+
+    <div id="resultado">
+        <h2>¡Memoria completada!</h2>
+        <p id="resumen"></p>
+        <p id="recompensa">Recompensa: 100 XP</p>
+        <a class="accion" href="actividad10.html">Ir a la última misión →</a>
+    </div>
+
+    <div class="controles">
+        <button class="accion" id="reiniciar">Reiniciar juego</button>
+        <a class="accion secundario" href="../unidades/unidad2.html">Volver a Unidad 02</a>
+        <a class="accion secundario" href="../index.html">Inicio</a>
+    </div>
+</section>
+<footer class="pie">MENTE QUEST · ACTIVIDAD 09 · MEMORIA LECTORA</footer>
+</div>
+
+<script src="../script.js"></script>
+<script>
+const pares = [
+    ["Idea principal", "Mensaje central del texto"],
+    ["Inferencia", "Conclusión basada en pistas"],
+    ["Resumen", "Versión breve de lo esencial"],
+    ["Detalles", "Datos que apoyan una idea"],
+    ["Propósito", "Razón por la que se escribió"],
+    ["Tono", "Actitud que transmite el texto"]
+];
+
+const tablero = document.getElementById("tablero");
+const mensaje = document.getElementById("mensaje");
+const parejasTexto = document.getElementById("parejas");
+const intentosTexto = document.getElementById("intentos");
+const tiempoTexto = document.getElementById("tiempo");
+const resultado = document.getElementById("resultado");
+
+let primera = null;
+let segunda = null;
+let bloqueado = false;
+let encontradas = 0;
+let intentos = 0;
+let segundos = 0;
+let reloj = null;
+let iniciado = false;
+let terminado = false;
+
+function mezclar(lista) {
+    for (let i = lista.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [lista[i], lista[j]] = [lista[j], lista[i]];
+    }
+    return lista;
+}
+
+function iniciar() {
+    tablero.innerHTML = "";
+    primera = null;
+    segunda = null;
+    bloqueado = false;
+    encontradas = 0;
+    intentos = 0;
+    segundos = 0;
+    iniciado = false;
+    terminado = false;
+
+    clearInterval(reloj);
+    parejasTexto.textContent = "0/6";
+    intentosTexto.textContent = "0";
+    tiempoTexto.textContent = "0 s";
+    resultado.style.display = "none";
+    mensaje.textContent = "Pulsa una tarjeta para comenzar.";
+
+    const tarjetas = [];
+    pares.forEach((par, i) => {
+        tarjetas.push({ texto: par[0], pareja: i });
+        tarjetas.push({ texto: par[1], pareja: i });
+    });
+
+    mezclar(tarjetas).forEach(item => {
+        const boton = document.createElement("button");
+        boton.className = "tarjeta";
+        boton.textContent = "?";
+        boton.dataset.pareja = item.pareja;
+        boton.dataset.texto = item.texto;
+        boton.setAttribute("aria-label", "Tarjeta oculta");
+        boton.addEventListener("click", () => voltear(boton));
+        tablero.appendChild(boton);
+    });
+}
+
+function comenzarReloj() {
+    if (iniciado) return;
+    iniciado = true;
+    reloj = setInterval(() => {
+        segundos++;
+        tiempoTexto.textContent = segundos + " s";
+    }, 1000);
+}
+
+function voltear(boton) {
+    if (bloqueado || terminado ||
+        boton.classList.contains("revelada") ||
+        boton.classList.contains("encontrada")) return;
+
+    comenzarReloj();
+    boton.textContent = boton.dataset.texto;
+    boton.classList.add("revelada");
+    boton.setAttribute("aria-label", boton.dataset.texto);
+
+    if (!primera) {
+        primera = boton;
+        mensaje.textContent = "Busca la definición o concepto que corresponde.";
+        return;
+    }
+
+    segunda = boton;
+    intentos++;
+    intentosTexto.textContent = intentos;
+
+    if (primera.dataset.pareja === segunda.dataset.pareja) {
+        primera.classList.remove("revelada");
+        segunda.classList.remove("revelada");
+        primera.classList.add("encontrada");
+        segunda.classList.add("encontrada");
+        primera.disabled = true;
+        segunda.disabled = true;
+
+        encontradas++;
+        parejasTexto.textContent = encontradas + "/6";
+        primera = null;
+        segunda = null;
+
+        mensaje.textContent = "¡Pareja correcta! Sigue buscando.";
+
+        if (encontradas === 6) completar();
+    } else {
+        bloqueado = true;
+        mensaje.textContent = "No coinciden. Intenta recordar sus posiciones.";
+        setTimeout(() => {
+            primera.textContent = "?";
+            segunda.textContent = "?";
+            primera.classList.remove("revelada");
+            segunda.classList.remove("revelada");
+            primera.setAttribute("aria-label", "Tarjeta oculta");
+            segunda.setAttribute("aria-label", "Tarjeta oculta");
+            primera = null;
+            segunda = null;
+            bloqueado = false;
+        }, 850);
+    }
+}
+
+function completar() {
+    terminado = true;
+    clearInterval(reloj);
+    resultado.style.display = "block";
+    document.getElementById("resumen").textContent =
+        `Encontraste todas las parejas en ${intentos} intentos y ${segundos} segundos.`;
+
+    const puntos = window.MenteQuest
+        ? window.MenteQuest.completarActividad("actividad09", 100)
+        : false;
+
+    document.getElementById("recompensa").textContent = puntos
+        ? "¡Has ganado 100 XP!"
+        : "Misión completada. Si ya la terminaste, no recibirás XP duplicados.";
+
+    mensaje.textContent = "¡Todas las parejas encontradas!";
+}
+
+document.getElementById("reiniciar").addEventListener("click", iniciar);
+iniciar();
+</script>
+</body>
+</html>
+```

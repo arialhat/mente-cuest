@@ -1,0 +1,1170 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070b09">
+  <title>Actividad 02 | MENTE QUEST</title>
+
+  <script src="../script.js" defer></script>
+
+  <style>
+    :root {
+      --verde: #39ff88;
+      --verde-oscuro: #123b25;
+      --fondo: #070b09;
+      --panel: rgba(16, 25, 20, 0.94);
+      --texto: #effff4;
+      --gris: #a5b8aa;
+      --rojo: #ff6565;
+      --borde: rgba(57, 255, 136, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--texto);
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(ellipse at 15% 0%, #16452c 0%, transparent 38%),
+        radial-gradient(ellipse at 90% 45%, #0d2819 0%, transparent 35%),
+        var(--fondo);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.12;
+      background-image:
+        linear-gradient(rgba(57,255,136,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57,255,136,.12) 1px, transparent 1px);
+      background-size: 35px 35px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 4px;
+    }
+
+    a {
+      color: var(--verde);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 15px 5%;
+      background: rgba(5, 12, 8, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--borde);
+    }
+
+    .logo {
+      color: var(--verde);
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(57,255,136,.45);
+    }
+
+    .volver {
+      padding: 9px 13px;
+      border: 1px solid var(--borde);
+      border-radius: 9px;
+      transition: .2s;
+    }
+
+    .volver:hover {
+      background: var(--verde-oscuro);
+      text-decoration: none;
+    }
+
+    main {
+      width: min(950px, 92%);
+      margin: 30px auto 60px;
+    }
+
+    .entrada {
+      animation: aparecer .7s ease both;
+    }
+
+    .etiqueta {
+      color: var(--verde);
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      line-height: 1.08;
+      margin: 12px 0;
+    }
+
+    h1 span {
+      color: var(--verde);
+      text-shadow: 0 0 22px rgba(57,255,136,.28);
+    }
+
+    h2 {
+      margin-top: 8px;
+    }
+
+    .intro {
+      color: var(--gris);
+      line-height: 1.75;
+    }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .hud-item {
+      padding: 15px;
+      border: 1px solid var(--borde);
+      background: rgba(10, 20, 14, .88);
+      border-radius: 12px;
+      transition: transform .25s, border-color .25s;
+    }
+
+    .hud-item:hover {
+      transform: translateY(-4px);
+      border-color: var(--verde);
+    }
+
+    .hud-label {
+      color: var(--gris);
+      font-size: .76rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .hud-valor {
+      display: block;
+      margin-top: 8px;
+      color: var(--verde);
+      font-size: 1.4rem;
+      font-weight: 900;
+    }
+
+    .barra-contenedor {
+      height: 9px;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #1b2a20;
+    }
+
+    .barra {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #16a34a, var(--verde));
+      box-shadow: 0 0 15px var(--verde);
+      border-radius: inherit;
+      transition: width .5s ease;
+    }
+
+    .panel {
+      position: relative;
+      padding: clamp(17px, 4vw, 28px);
+      margin-top: 22px;
+      background: var(--panel);
+      border: 1px solid var(--borde);
+      border-radius: 17px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.2);
+      animation: aparecer .5s ease both;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 18px;
+      width: 65px;
+      height: 2px;
+      background: var(--verde);
+      box-shadow: 0 0 12px var(--verde);
+    }
+
+    .texto-misterio {
+      padding: 20px;
+      margin-top: 18px;
+      background: #09120c;
+      border-left: 4px solid var(--verde);
+      border-radius: 8px;
+      line-height: 1.85;
+    }
+
+    .texto-misterio p {
+      margin: 0 0 13px;
+    }
+
+    .texto-misterio p:last-child {
+      margin-bottom: 0;
+    }
+
+    .texto-misterio strong {
+      color: var(--verde);
+    }
+
+    .objetivo {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 15px;
+      margin: 20px 0;
+      background: rgba(57,255,136,.06);
+      border: 1px dashed var(--borde);
+      border-radius: 10px;
+      line-height: 1.6;
+    }
+
+    .objetivo-icono {
+      font-size: 1.5rem;
+    }
+
+    .pistas {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+      margin: 20px 0;
+    }
+
+    .pista {
+      position: relative;
+      min-height: 120px;
+      padding: 18px;
+      text-align: left;
+      color: var(--texto);
+      background: linear-gradient(145deg, #101b13, #09100c);
+      border: 1px solid #28563a;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform .2s, border-color .2s, background .2s, box-shadow .2s;
+    }
+
+    .pista:hover:not(:disabled) {
+      transform: translateY(-4px);
+      border-color: var(--verde);
+      box-shadow: 0 0 20px rgba(57,255,136,.12);
+    }
+
+    .pista.elegida {
+      border: 2px solid var(--verde);
+      background: #153321;
+      box-shadow: 0 0 18px rgba(57,255,136,.17);
+    }
+
+    .pista.correcta {
+      border-color: var(--verde);
+      background: #123b24;
+    }
+
+    .pista.incorrecta {
+      border-color: var(--rojo);
+      background: #381616;
+      animation: sacudir .3s;
+    }
+
+    .pista:disabled {
+      cursor: default;
+      opacity: .85;
+    }
+
+    .pista-codigo {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--verde);
+      font-size: .74rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+    }
+
+    .pista-estado {
+      display: block;
+      margin-top: 10px;
+      font-size: .8rem;
+      color: var(--gris);
+    }
+
+    .acciones {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .accion {
+      padding: 13px 20px;
+      color: #06130a;
+      background: var(--verde);
+      border: 1px solid var(--verde);
+      border-radius: 9px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, background .2s;
+    }
+
+    .accion:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(57,255,136,.3);
+    }
+
+    .accion.secundario {
+      color: var(--verde);
+      background: transparent;
+    }
+
+    .accion:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .mensaje {
+      min-height: 27px;
+      margin-top: 18px;
+      color: var(--verde);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .mensaje.error {
+      color: var(--rojo);
+    }
+
+    #preguntas {
+      display: none;
+    }
+
+    #preguntas.visible {
+      display: block;
+      animation: aparecer .6s ease both;
+    }
+
+    .pregunta {
+      padding: 18px;
+      margin: 16px 0;
+      background: #0a120d;
+      border: 1px solid #23442e;
+      border-radius: 12px;
+      transition: border-color .2s;
+    }
+
+    .pregunta:focus-within {
+      border-color: var(--verde);
+    }
+
+    .pregunta-titulo {
+      font-weight: 800;
+      line-height: 1.6;
+    }
+
+    .numero-pregunta {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      margin-right: 6px;
+      color: #06130a;
+      background: var(--verde);
+      border-radius: 8px;
+      font-size: .85rem;
+    }
+
+    .opcion {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px;
+      margin-top: 7px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      line-height: 1.5;
+      transition: background .2s, border-color .2s;
+    }
+
+    .opcion:hover {
+      background: rgba(57,255,136,.06);
+      border-color: var(--borde);
+    }
+
+    .opcion input {
+      margin-top: 4px;
+      accent-color: var(--verde);
+    }
+
+    .opcion.correcta {
+      border-color: var(--verde);
+      background: rgba(57,255,136,.1);
+    }
+
+    .opcion.incorrecta {
+      border-color: var(--rojo);
+      background: rgba(255,101,101,.09);
+    }
+
+    .feedback-pregunta {
+      min-height: 20px;
+      margin-top: 10px;
+      font-size: .9rem;
+      line-height: 1.5;
+    }
+
+    .resultado {
+      display: none;
+      padding: 24px;
+      margin-top: 22px;
+      text-align: center;
+      background: linear-gradient(145deg, #102e1b, #09120c);
+      border: 1px solid var(--verde);
+      border-radius: 16px;
+    }
+
+    .resultado.visible {
+      display: block;
+      animation: aparecer .6s ease both;
+    }
+
+    .victoria-icono {
+      font-size: 3rem;
+      animation: flotar 2s ease-in-out infinite;
+    }
+
+    .puntuacion {
+      margin: 20px 0;
+      color: var(--verde);
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 900;
+      text-shadow: 0 0 20px rgba(57,255,136,.25);
+    }
+
+    .xp-recompensa {
+      display: inline-block;
+      padding: 10px 18px;
+      color: var(--verde);
+      background: #07130b;
+      border: 1px solid var(--borde);
+      border-radius: 30px;
+      font-weight: 900;
+    }
+
+    footer {
+      padding: 25px 12px;
+      color: var(--gris);
+      text-align: center;
+      font-size: .85rem;
+    }
+
+    .notificacion {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 30;
+      max-width: calc(100% - 40px);
+      padding: 14px 18px;
+      color: var(--verde);
+      background: #0a160e;
+      border: 1px solid var(--verde);
+      border-radius: 10px;
+      box-shadow: 0 0 25px rgba(57,255,136,.15);
+      opacity: 0;
+      transform: translateY(15px);
+      pointer-events: none;
+      transition: .3s;
+    }
+
+    .notificacion.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .particulas {
+      color: var(--verde);
+      font-weight: 900;
+      animation: subir .8s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes flotar {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-7px); }
+    }
+
+    @keyframes sacudir {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    @keyframes subir {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-55px); }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 13px 4%;
+      }
+
+      main {
+        width: 94%;
+        margin-top: 22px;
+      }
+
+      .hud {
+        grid-template-columns: 1fr;
+      }
+
+      .hud-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .hud-valor {
+        margin-top: 0;
+      }
+
+      .pistas {
+        grid-template-columns: 1fr;
+      }
+
+      .pista {
+        min-height: 95px;
+      }
+
+      .accion {
+        width: 100%;
+      }
+
+      .texto-misterio {
+        padding: 15px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">◈ MENTE QUEST</div>
+    <a class="volver" href="../unidades/unidad1.html">← Unidad 01</a>
+  </header>
+
+  <main>
+    <section class="entrada">
+      <div class="etiqueta">Unidad 01 / Actividad 02</div>
+      <h1>Detective de <span>ideas</span></h1>
+
+      <p class="intro">
+        ¡Explorador, ha llegado una nueva misión! Investiga el misterio de
+        la biblioteca, encuentra las pruebas importantes y demuestra que
+        puedes identificar ideas principales y detalles.
+      </p>
+
+      <div class="hud">
+        <div class="hud-item">
+          <div class="hud-label">Experiencia actual</div>
+          <span class="hud-valor"><span id="xp">0</span> XP</span>
+        </div>
+
+        <div class="hud-item">
+          <div class="hud-label">Rango</div>
+          <span class="hud-valor" id="rango-jugador">RECLUTA</span>
+        </div>
+
+        <div class="hud-item">
+          <div class="hud-label">Misiones completadas</div>
+          <span class="hud-valor" id="misiones-completadas">0/10</span>
+        </div>
+      </div>
+
+      <div class="etiqueta">Progreso de esta misión</div>
+      <div
+        class="barra-contenedor"
+        role="progressbar"
+        aria-label="Progreso de la actividad"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+        id="progreso-accesible"
+      >
+        <div class="barra" id="barra-mision"></div>
+      </div>
+
+      <p class="intro" id="estado-mision">
+        Fase 1 de 2: investiga las pistas.
+      </p>
+    </section>
+
+    <section class="panel" id="archivo">
+      <div class="etiqueta">Archivo confidencial 002</div>
+      <h2>🕵️ El misterio de la biblioteca</h2>
+
+      <div class="texto-misterio">
+        <p>
+          El lunes, los estudiantes descubrieron que casi nadie utilizaba
+          el rincón de lectura de su escuela. Los libros estaban ordenados,
+          pero muchos alumnos pensaban que leer era una actividad aburrida.
+        </p>
+
+        <p>
+          Valeria decidió investigar el problema. Entrevistó a varios
+          compañeros y descubrió que preferían historias de aventuras,
+          misterio y ciencia ficción. También observó que el rincón tenía
+          poca iluminación y asientos incómodos.
+        </p>
+
+        <p>
+          Con ayuda de su grupo, organizaron una votación para elegir
+          nuevas lecturas, mejoraron el espacio y crearon una recomendación
+          semanal de libros. Un mes después, más estudiantes visitaban
+          la biblioteca y compartían sus historias favoritas.
+        </p>
+      </div>
+
+      <div class="objetivo">
+        <span class="objetivo-icono">🎯</span>
+        <div>
+          <strong>Objetivo de la misión</strong>
+          <div>
+            Selecciona exactamente dos pistas que expliquen cómo se
+            descubrió el problema y qué acciones ayudaron a solucionarlo.
+          </div>
+        </div>
+      </div>
+
+      <h3>🔎 Minijuego: identifica las evidencias</h3>
+      <p class="intro">
+        Pulsa las tarjetas para seleccionarlas. Necesitas encontrar las dos
+        pistas relevantes para desbloquear el interrogatorio.
+      </p>
+
+      <div class="pistas" id="pistas">
+        <button type="button" class="pista" data-correcta="false">
+          <span class="pista-codigo">EVIDENCIA A</span>
+          El problema se descubrió un lunes.
+          <span class="pista-estado">Pulsa para seleccionar</span>
+        </button>
+
+        <button type="button" class="pista" data-correcta="true">
+          <span class="pista-codigo">EVIDENCIA B</span>
+          Las entrevistas revelaron qué tipos de historias preferían los alumnos.
+          <span class="pista-estado">Pulsa para seleccionar</span>
+        </button>
+
+        <button type="button" class="pista" data-correcta="false">
+          <span class="pista-codigo">EVIDENCIA C</span>
+          Los libros ya estaban ordenados.
+          <span class="pista-estado">Pulsa para seleccionar</span>
+        </button>
+
+        <button type="button" class="pista" data-correcta="true">
+          <span class="pista-codigo">EVIDENCIA D</span>
+          El grupo mejoró el espacio y recomendó libros según los intereses de los estudiantes.
+          <span class="pista-estado">Pulsa para seleccionar</span>
+        </button>
+      </div>
+
+      <div class="acciones">
+        <button class="accion" type="button" id="verificarPistas">
+          Verificar evidencias
+        </button>
+        <button class="accion secundario" type="button" id="reiniciarPistas">
+          Reiniciar selección
+        </button>
+      </div>
+
+      <p class="mensaje" id="mensajePistas" role="status" aria-live="polite">
+        Evidencias seleccionadas: 0 de 2.
+      </p>
+    </section>
+
+    <section class="panel" id="preguntas">
+      <div class="etiqueta">Fase 2 / Evaluación</div>
+      <h2>🧠 Interroga las evidencias</h2>
+      <p class="intro">
+        ¡Buen trabajo! Ahora responde las cinco preguntas. Cada acierto
+        vale 10 XP. Lee con atención antes de elegir.
+      </p>
+
+      <form id="formulario">
+        <div class="pregunta">
+          <p class="pregunta-titulo">
+            <span class="numero-pregunta">1</span>
+            ¿Cuál era el problema principal de la biblioteca?
+          </p>
+          <label class="opcion">
+            <input type="radio" name="p1" value="a" required>
+            A) Los libros habían desaparecido.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p1" value="b">
+            B) Pocos estudiantes utilizaban el rincón de lectura.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p1" value="c">
+            C) La escuela no tenía estudiantes.
+          </label>
+          <div class="feedback-pregunta" id="feedback-p1"></div>
+        </div>
+
+        <div class="pregunta">
+          <p class="pregunta-titulo">
+            <span class="numero-pregunta">2</span>
+            ¿Qué hizo Valeria para comprender mejor la situación?
+          </p>
+          <label class="opcion">
+            <input type="radio" name="p2" value="a" required>
+            A) Cerró la biblioteca.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p2" value="b">
+            B) Cambió todos los libros sin preguntar.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p2" value="c">
+            C) Entrevistó a sus compañeros y observó el espacio.
+          </label>
+          <div class="feedback-pregunta" id="feedback-p2"></div>
+        </div>
+
+        <div class="pregunta">
+          <p class="pregunta-titulo">
+            <span class="numero-pregunta">3</span>
+            ¿Cuál es la idea principal del texto?
+          </p>
+          <label class="opcion">
+            <input type="radio" name="p3" value="a" required>
+            A) Conocer las necesidades de los lectores y mejorar el espacio puede fomentar la lectura.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p3" value="b">
+            B) Las bibliotecas deben tener únicamente libros de misterio.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p3" value="c">
+            C) Las entrevistas nunca ayudan a resolver problemas.
+          </label>
+          <div class="feedback-pregunta" id="feedback-p3"></div>
+        </div>
+
+        <div class="pregunta">
+          <p class="pregunta-titulo">
+            <span class="numero-pregunta">4</span>
+            ¿Qué función cumple el dato de que los libros estaban ordenados?
+          </p>
+          <label class="opcion">
+            <input type="radio" name="p4" value="a" required>
+            A) Demuestra que todos los alumnos leían a diario.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p4" value="b">
+            B) Ayuda a comprender que el problema no era el desorden de los libros.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p4" value="c">
+            C) Es la solución que propuso Valeria.
+          </label>
+          <div class="feedback-pregunta" id="feedback-p4"></div>
+        </div>
+
+        <div class="pregunta">
+          <p class="pregunta-titulo">
+            <span class="numero-pregunta">5</span>
+            ¿Qué evidencia muestra que las acciones del grupo funcionaron?
+          </p>
+          <label class="opcion">
+            <input type="radio" name="p5" value="a" required>
+            A) El problema se descubrió un lunes.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p5" value="b">
+            B) Los estudiantes votaron una sola vez.
+          </label>
+          <label class="opcion">
+            <input type="radio" name="p5" value="c">
+            C) Un mes después, más estudiantes visitaban la biblioteca.
+          </label>
+          <div class="feedback-pregunta" id="feedback-p5"></div>
+        </div>
+
+        <div class="acciones">
+          <button type="submit" class="accion" id="finalizar">
+            ⚡ Finalizar misión
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="resultado" id="resultado" aria-live="polite"></section>
+  </main>
+
+  <div class="notificacion" id="notificacion" role="status" aria-live="polite"></div>
+
+  <footer>
+    MENTE QUEST · Observa las pistas. Comprende el mensaje. Supera el desafío.
+  </footer>
+
+  <script>
+    const botonesPista = [...document.querySelectorAll(".pista")];
+    const mensajePistas = document.getElementById("mensajePistas");
+    const verificarPistas = document.getElementById("verificarPistas");
+    const reiniciarPistas = document.getElementById("reiniciarPistas");
+    const seccionPreguntas = document.getElementById("preguntas");
+    const formulario = document.getElementById("formulario");
+    const resultado = document.getElementById("resultado");
+    const barraMision = document.getElementById("barra-mision");
+    const progresoAccesible = document.getElementById("progreso-accesible");
+    const estadoMision = document.getElementById("estado-mision");
+    const notificacion = document.getElementById("notificacion");
+
+    let seleccionadas = [];
+    let pistasResueltas = false;
+    let cuestionarioEnviado = false;
+    let xpMision = 0;
+    let temporizadorNotificacion;
+
+    const respuestasCorrectas = {
+      p1: "b",
+      p2: "c",
+      p3: "a",
+      p4: "b",
+      p5: "c"
+    };
+
+    const explicaciones = {
+      p1: "El texto explica que casi nadie utilizaba el rincón de lectura.",
+      p2: "Valeria entrevistó a sus compañeros y observó las condiciones del espacio.",
+      p3: "El grupo identificó las necesidades de los lectores y mejoró el lugar.",
+      p4: "El dato permite descartar que el desorden de los libros fuera el problema.",
+      p5: "El aumento de visitantes muestra un resultado posterior a las mejoras."
+    };
+
+    function mostrarNotificacion(texto) {
+      notificacion.textContent = texto;
+      notificacion.classList.add("visible");
+
+      clearTimeout(temporizadorNotificacion);
+      temporizadorNotificacion = setTimeout(() => {
+        notificacion.classList.remove("visible");
+      }, 2600);
+    }
+
+    function actualizarProgreso(porcentaje, texto) {
+      const valor = Math.max(0, Math.min(100, porcentaje));
+      barraMision.style.width = valor + "%";
+      progresoAccesible.setAttribute("aria-valuenow", valor);
+      estadoMision.textContent = texto;
+    }
+
+    function actualizarXPEnPantalla() {
+      const elementoXP = document.getElementById("xp");
+
+      if (window.MenteQuest && elementoXP) {
+        elementoXP.textContent = window.MenteQuest.obtenerXP();
+      }
+    }
+
+    function actualizarEstadosPistas() {
+      botonesPista.forEach((boton, indice) => {
+        const estado = boton.querySelector(".pista-estado");
+
+        if (seleccionadas.includes(indice)) {
+          estado.textContent = "✓ Seleccionada";
+        } else {
+          estado.textContent = "Pulsa para seleccionar";
+        }
+      });
+    }
+
+    botonesPista.forEach((boton, indice) => {
+      boton.addEventListener("click", () => {
+        if (pistasResueltas) return;
+
+        if (seleccionadas.includes(indice)) {
+          seleccionadas = seleccionadas.filter(i => i !== indice);
+          boton.classList.remove("elegida");
+        } else {
+          if (seleccionadas.length >= 2) {
+            mensajePistas.textContent = "Solo puedes elegir dos evidencias.";
+            mensajePistas.classList.add("error");
+            return;
+          }
+
+          seleccionadas.push(indice);
+          boton.classList.add("elegida");
+        }
+
+        mensajePistas.classList.remove("error");
+        actualizarEstadosPistas();
+
+        mensajePistas.textContent =
+          "Evidencias seleccionadas: " + seleccionadas.length + " de 2.";
+      });
+    });
+
+    verificarPistas.addEventListener("click", () => {
+      if (seleccionadas.length !== 2) {
+        mensajePistas.textContent =
+          "Selecciona exactamente dos evidencias antes de verificar.";
+        mensajePistas.classList.add("error");
+        return;
+      }
+
+      const correctas = seleccionadas.every(indice =>
+        botonesPista[indice].dataset.correcta === "true"
+      );
+
+      if (correctas) {
+        pistasResueltas = true;
+        xpMision = 50;
+
+        botonesPista.forEach(boton => {
+          boton.disabled = true;
+
+          if (boton.dataset.correcta === "true") {
+            boton.classList.add("correcta");
+            boton.querySelector(".pista-estado").textContent = "✓ Evidencia clave";
+          } else {
+            boton.querySelector(".pista-estado").textContent = "Evidencia secundaria";
+          }
+        });
+
+        verificarPistas.disabled = true;
+        reiniciarPistas.disabled = true;
+
+        mensajePistas.classList.remove("error");
+        mensajePistas.textContent =
+          "¡Excelente, detective! Identificaste las dos evidencias clave.";
+
+        actualizarProgreso(50, "Fase 1 completada: evidencias identificadas.");
+        mostrarNotificacion("+50 XP potenciales · ¡Cuestionario desbloqueado!");
+
+        seccionPreguntas.classList.add("visible");
+
+        setTimeout(() => {
+          seccionPreguntas.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }, 250);
+      } else {
+        mensajePistas.classList.add("error");
+        mensajePistas.textContent =
+          "No son las dos evidencias clave. Relee el archivo e inténtalo de nuevo.";
+
+        seleccionadas.forEach(indice => {
+          botonesPista[indice].classList.add("incorrecta");
+        });
+
+        setTimeout(() => {
+          seleccionadas.forEach(indice => {
+            botonesPista[indice].classList.remove("incorrecta", "elegida");
+          });
+
+          seleccionadas = [];
+          actualizarEstadosPistas();
+          mensajePistas.classList.remove("error");
+          mensajePistas.textContent = "Vuelve a elegir dos evidencias.";
+        }, 1000);
+      }
+    });
+
+    reiniciarPistas.addEventListener("click", () => {
+      if (pistasResueltas) return;
+
+      seleccionadas = [];
+
+      botonesPista.forEach(boton => {
+        boton.classList.remove("elegida", "incorrecta");
+      });
+
+      actualizarEstadosPistas();
+      mensajePistas.classList.remove("error");
+      mensajePistas.textContent = "Selección reiniciada. Elige dos evidencias.";
+    });
+
+    // Retroalimentación inmediata al responder cada pregunta.
+    formulario.querySelectorAll('input[type="radio"]').forEach(input => {
+      input.addEventListener("change", () => {
+        if (cuestionarioEnviado) return;
+
+        const nombre = input.name;
+        const contenedor = input.closest(".pregunta");
+        const feedback = document.getElementById("feedback-" + nombre);
+        const seleccion = formulario.querySelector(
+          'input[name="' + nombre + '"]:checked'
+        );
+
+        contenedor.querySelectorAll(".opcion").forEach(opcion => {
+          opcion.classList.remove("correcta", "incorrecta");
+        });
+
+        if (!seleccion) return;
+
+        const opcionElegida = seleccion.closest(".opcion");
+
+        if (seleccion.value === respuestasCorrectas[nombre]) {
+          opcionElegida.classList.add("correcta");
+          feedback.textContent = "✓ ¡Correcto! " + explicaciones[nombre];
+          feedback.style.color = "var(--verde)";
+        } else {
+          opcionElegida.classList.add("incorrecta");
+          feedback.textContent = "Todavía no. " + explicaciones[nombre];
+          feedback.style.color = "var(--rojo)";
+        }
+      });
+    });
+
+    formulario.addEventListener("submit", evento => {
+      evento.preventDefault();
+
+      if (!pistasResueltas || cuestionarioEnviado) return;
+
+      if (!formulario.reportValidity()) return;
+
+      const datos = new FormData(formulario);
+      let aciertos = 0;
+
+      for (const pregunta in respuestasCorrectas) {
+        if (datos.get(pregunta) === respuestasCorrectas[pregunta]) {
+          aciertos++;
+        }
+      }
+
+      cuestionarioEnviado = true;
+
+      const xpPreguntas = aciertos * 10;
+      const xpTotal = xpMision + xpPreguntas;
+      const porcentaje = Math.round((aciertos / 5) * 100);
+
+      formulario.querySelectorAll("input, button").forEach(elemento => {
+        elemento.disabled = true;
+      });
+
+      let textoXP;
+
+      if (window.MenteQuest) {
+        const agregado = window.MenteQuest.completarActividad(
+          "actividad02",
+          xpTotal
+        );
+
+        textoXP = agregado
+          ? "Se han registrado " + xpTotal + " XP en tu perfil."
+          : "Esta actividad ya estaba registrada. No se añadieron XP adicionales.";
+
+        actualizarXPEnPantalla();
+      } else {
+        textoXP = "Puntuación de esta misión: " + xpTotal + " XP.";
+      }
+
+      actualizarProgreso(100, "Misión finalizada.");
+
+      let mensajeFinal;
+
+      if (aciertos === 5) {
+        mensajeFinal = "¡PERFECTO! Dominas la investigación de ideas.";
+      } else if (aciertos >= 3) {
+        mensajeFinal = "¡Buen trabajo! Sigue entrenando tu comprensión lectora.";
+      } else {
+        mensajeFinal = "Misión superada. Repasa el texto y continúa aprendiendo.";
+      }
+
+      resultado.innerHTML = `
+        <div class="victoria-icono" aria-hidden="true">🏆</div>
+        <div class="etiqueta">Informe de misión 002</div>
+        <h2>¡Misión completada!</h2>
+        <p>${mensajeFinal}</p>
+
+        <div class="puntuacion">${porcentaje}%</div>
+        <p>Respuestas correctas: <strong>${aciertos} de 5</strong></p>
+
+        <div class="xp-recompensa">⚡ ${xpTotal} XP obtenidos</div>
+
+        <p class="intro">
+          Evidencias: 50 XP · Preguntas: ${xpPreguntas} XP
+        </p>
+
+        <p>${textoXP}</p>
+
+        <div class="acciones">
+          <a class="accion" href="actividad03.html">
+            Continuar misión 03 →
+          </a>
+
+          <a class="accion secundario" href="../unidades/unidad1.html">
+            Volver a Unidad 01
+          </a>
+        </div>
+      `;
+
+      resultado.classList.add("visible");
+      mostrarNotificacion("¡Misión finalizada! " + aciertos + "/5 respuestas correctas.");
+
+      resultado.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      actualizarXPEnPantalla();
+    });
+  </script>
+</body>
+</html>
+

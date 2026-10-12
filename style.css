@@ -1,0 +1,792 @@
+
+/* =================================
+   MENTE QUEST 2.0
+   Diseño futurista verde y negro
+================================= */
+
+:root {
+    --fondo: #050907;
+    --panel: #0b1510;
+    --panel-claro: #101f16;
+    --verde: #39ff88;
+    --verde-oscuro: #14b85a;
+    --blanco: #edfff2;
+    --gris: #9aada0;
+    --borde: rgba(57, 255, 136, 0.23);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+}
+
+body {
+    background:
+        radial-gradient(ellipse at 50% 0%, #10251a 0%, transparent 50%),
+        var(--fondo);
+    color: var(--blanco);
+    font-family: "Segoe UI", Arial, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible {
+    outline: 2px solid var(--verde);
+    outline-offset: 5px;
+}
+
+/* BARRA SUPERIOR */
+
+.barra-superior {
+    min-height: 76px;
+    padding: 16px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    background: rgba(5, 9, 7, 0.92);
+    border-bottom: 1px solid var(--borde);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(14px);
+}
+
+.logo {
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.logo span {
+    color: var(--verde);
+}
+
+.barra-superior nav {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.barra-superior nav a {
+    color: var(--gris);
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.barra-superior nav a:hover {
+    color: var(--verde);
+}
+
+.nivel-jugador {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    line-height: 1.4;
+}
+
+.nivel-jugador span {
+    color: var(--gris);
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+}
+
+.nivel-jugador strong {
+    color: var(--verde);
+    font-size: 0.95rem;
+}
+
+/* PORTADA */
+
+.hero {
+    min-height: 590px;
+    padding: 90px 9%;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    gap: 60px;
+    position: relative;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(57, 255, 136, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 136, 0.035) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+.hero-contenido,
+.panel-mision {
+    position: relative;
+    z-index: 1;
+}
+
+.etiqueta {
+    color: var(--verde);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+}
+
+.hero h1 {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 950;
+    line-height: 1.08;
+    letter-spacing: -2px;
+}
+
+.hero h1 span {
+    color: var(--verde);
+    text-shadow: 0 0 28px rgba(57, 255, 136, 0.3);
+}
+
+.descripcion {
+    max-width: 540px;
+    margin-top: 25px;
+    color: var(--gris);
+    font-size: 1.05rem;
+}
+
+.botones {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.boton {
+    display: inline-block;
+    padding: 14px 22px;
+    border: 1px solid var(--verde);
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    transition: 0.25s;
+}
+
+.boton.principal {
+    background: var(--verde);
+    color: #031008;
+}
+
+.boton.principal:hover {
+    background: #a0ffc2;
+    box-shadow: 0 0 25px rgba(57, 255, 136, 0.3);
+    transform: translateY(-3px);
+}
+
+.boton.secundario {
+    color: var(--verde);
+    background: rgba(57, 255, 136, 0.04);
+}
+
+.boton.secundario:hover {
+    background: rgba(57, 255, 136, 0.12);
+}
+
+.estadisticas {
+    display: flex;
+    gap: 38px;
+    flex-wrap: wrap;
+    margin-top: 48px;
+}
+
+.estadisticas div {
+    display: flex;
+    flex-direction: column;
+}
+
+.estadisticas strong {
+    font-size: 1.8rem;
+    color: var(--verde);
+}
+
+.estadisticas span {
+    color: var(--gris);
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+}
+
+/* PANEL DE MISIÓN */
+
+.panel-mision {
+    min-height: 390px;
+    padding: 25px;
+    text-align: center;
+    background:
+        radial-gradient(circle at 50% 45%, rgba(57, 255, 136, 0.12), transparent 48%),
+        var(--panel);
+    border: 1px solid var(--borde);
+    box-shadow: 0 0 50px rgba(57, 255, 136, 0.06);
+    clip-path: polygon(
+        0 0, calc(100% - 25px) 0, 100% 25px,
+        100% 100%, 25px 100%, 0 calc(100% - 25px)
+    );
+}
+
+.panel-cabecera {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    color: var(--gris);
+}
+
+.estado {
+    color: var(--verde);
+}
+
+/* PERSONAJE ORIGINAL TIPO TRIPULANTE */
+
+.personaje {
+    width: 125px;
+    height: 150px;
+    margin: 35px auto 25px;
+    position: relative;
+    background: linear-gradient(110deg, #5cff9a, #14a94d);
+    border: 3px solid #a6ffc7;
+    border-radius: 48% 48% 34% 34%;
+    box-shadow:
+        0 0 25px rgba(57, 255, 136, 0.3),
+        inset -15px -8px 0 rgba(0, 0, 0, 0.15);
+    animation: flotar 3s ease-in-out infinite;
+}
+
+.visor {
+    width: 88px;
+    height: 46px;
+    position: absolute;
+    right: -13px;
+    top: 35px;
+    background: linear-gradient(135deg, #d9fff9, #5ba9b0 60%, #234f5a);
+    border: 3px solid #172e2b;
+    border-radius: 22px 25px 22px 22px;
+    box-shadow: inset 0 4px 8px rgba(255, 255, 255, 0.6);
+}
+
+.mochila {
+    width: 28px;
+    height: 72px;
+    position: absolute;
+    left: -22px;
+    top: 44px;
+    background: #188343;
+    border: 3px solid #7cffab;
+    border-radius: 10px 5px 5px 10px;
+}
+
+.reflejo {
+    width: 17px;
+    height: 55px;
+    position: absolute;
+    left: 15px;
+    top: 16px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+@keyframes flotar {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.codigo {
+    color: var(--verde);
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.panel-texto {
+    max-width: 340px;
+    margin: 10px auto 20px;
+    color: var(--gris);
+    font-size: 0.85rem;
+}
+
+.barra-progreso {
+    height: 6px;
+    margin-top: 20px;
+    background: #1b2a20;
+    overflow: hidden;
+}
+
+.barra-progreso div {
+    width: 15%;
+    height: 100%;
+    background: var(--verde);
+    box-shadow: 0 0 12px var(--verde);
+}
+
+.panel-mision small {
+    display: block;
+    margin-top: 8px;
+    color: var(--gris);
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+}
+
+/* SECCIONES GENERALES */
+
+.como-jugar,
+.unidades {
+    padding: 85px 9%;
+}
+
+.como-jugar h2,
+.unidades h2,
+.objetivo h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    line-height: 1.2;
+    margin-bottom: 35px;
+}
+
+.como-jugar {
+    background: #080e0a;
+    border-top: 1px solid rgba(57, 255, 136, 0.1);
+    border-bottom: 1px solid rgba(57, 255, 136, 0.1);
+}
+
+.pasos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.tarjeta {
+    padding: 28px;
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    transition: 0.25s;
+}
+
+.tarjeta:hover {
+    transform: translateY(-5px);
+    border-color: var(--verde);
+}
+
+.numero {
+    color: var(--verde);
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.tarjeta h3 {
+    margin: 15px 0 10px;
+    letter-spacing: 1px;
+}
+
+.tarjeta p {
+    color: var(--gris);
+    font-size: 0.9rem;
+}
+
+/* TARJETAS DE UNIDADES */
+
+.unidades {
+    background:
+        radial-gradient(ellipse at 50% 100%, rgba(20, 184, 90, 0.07), transparent 60%);
+}
+
+.seccion-descripcion {
+    margin-top: -20px;
+    margin-bottom: 35px;
+    color: var(--gris);
+}
+
+.rejilla-unidades {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+}
+
+.unidad {
+    min-width: 0;
+    padding: 30px;
+    background: linear-gradient(145deg, var(--panel-claro), var(--panel));
+    border: 1px solid var(--borde);
+    transition: 0.25s;
+}
+
+.unidad:hover {
+    border-color: var(--verde);
+    box-shadow: 0 0 25px rgba(57, 255, 136, 0.08);
+    transform: translateY(-5px);
+}
+
+.unidad-icono {
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 20px;
+    border: 1px solid var(--verde);
+    color: var(--verde);
+    font-size: 2rem;
+    background: rgba(57, 255, 136, 0.07);
+}
+
+.unidad-numero {
+    color: var(--verde);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.unidad h3 {
+    margin: 10px 0;
+    font-size: 1.35rem;
+}
+
+.unidad > p {
+    color: var(--gris);
+    font-size: 0.9rem;
+    min-height: 65px;
+}
+
+.unidad-pie {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--borde);
+}
+
+.unidad-pie span {
+    color: var(--gris);
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+}
+
+.unidad-pie a {
+    color: var(--verde);
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+
+.unidad-pie a:hover {
+    text-shadow: 0 0 12px var(--verde);
+}
+
+/* OBJETIVO PEDAGÓGICO */
+
+.objetivo {
+    padding: 80px 9%;
+    text-align: center;
+    background: #080e0a;
+    border-top: 1px solid var(--borde);
+}
+
+.objetivo h2 {
+    max-width: 800px;
+    margin: 0 auto 20px;
+}
+
+.objetivo > p:last-child {
+    max-width: 700px;
+    margin: auto;
+    color: var(--gris);
+}
+
+/* PIE DE PÁGINA */
+
+footer {
+    padding: 35px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--borde);
+    background: #030604;
+}
+
+footer p {
+    color: var(--gris);
+    font-size: 0.8rem;
+}
+
+/* ADAPTACIÓN A TELÉFONOS Y TABLETAS */
+
+@media (max-width: 900px) {
+    .hero {
+        grid-template-columns: 1fr;
+        padding-top: 65px;
+        gap: 45px;
+    }
+
+    .panel-mision {
+        max-width: 500px;
+        width: 100%;
+        margin: auto;
+    }
+
+    .pasos {
+        grid-template-columns: 1fr;
+    }
+
+    .barra-superior {
+        padding: 15px 5%;
+    }
+}
+
+@media (max-width: 600px) {
+    .barra-superior {
+        justify-content: center;
+    }
+
+    .barra-superior nav {
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .nivel-jugador {
+        display: none;
+    }
+
+    .hero {
+        padding: 55px 6%;
+    }
+
+    .hero h1 {
+        letter-spacing: -1px;
+    }
+
+    .estadisticas {
+        gap: 24px;
+    }
+
+    .como-jugar,
+    .unidades,
+    .objetivo {
+        padding: 60px 6%;
+    }
+
+    .rejilla-unidades {
+        grid-template-columns: 1fr;
+    }
+
+    .unidad {
+        padding: 23px;
+    }
+
+    footer {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* RESPETAR PREFERENCIAS DE MOVIMIENTO */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* PANEL DE RANGOS DE MENTE QUEST */
+.rango-panel {
+  margin: 24px auto;
+  padding: 22px;
+  max-width: 480px;
+  text-align: center;
+  background: linear-gradient(145deg, #09140e, #10251a);
+  border: 1px solid rgba(57, 255, 136, 0.55);
+  border-radius: 14px;
+  box-shadow: 0 0 22px rgba(57, 255, 136, 0.12);
+}
+
+.rango-etiqueta {
+  color: #9aada0;
+  font-size: 12px;
+  letter-spacing: 3px;
+}
+
+#rango-jugador {
+  margin: 10px 0;
+  color: #39ff88;
+  font-size: 30px;
+  letter-spacing: 4px;
+  text-shadow: 0 0 14px rgba(57, 255, 136, 0.45);
+}
+
+#siguiente-rango {
+  color: #edfff2;
+  font-size: 14px;
+}
+
+#misiones-completadas {
+  color: #39ff88;
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .rango-panel {
+    margin: 18px 0;
+    padding: 18px;
+  }
+
+  #rango-jugador {
+    font-size: 25px;
+  }
+}
+
+/* ===== REPARACIÓN DE TARJETAS Y BOTONES DE ENTRADA ===== */
+
+.grid-unidades,
+.grid-misiones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+  align-items: stretch;
+}
+
+.unidad-card,
+.mision-card,
+.tarjeta,
+.card {
+  box-sizing: border-box;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.unidad-card,
+.mision-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  background: linear-gradient(145deg, #0b1911, #07100b);
+  border: 1px solid rgba(57, 255, 136, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 0 14px rgba(57, 255, 136, 0.06);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.unidad-card:hover,
+.mision-card:hover {
+  border-color: #39ff88;
+  transform: translateY(-4px);
+}
+
+.unidad-card h2,
+.unidad-card h3,
+.mision-card h2,
+.mision-card h3 {
+  color: #39ff88;
+  margin-top: 8px;
+}
+
+.unidad-card p,
+.mision-card p {
+  color: #c4d6ca;
+  line-height: 1.6;
+}
+
+/* Botones que llevan a las unidades y misiones */
+.unidad-card a,
+.mision-card a,
+a.boton,
+button.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  max-width: 100%;
+  min-height: 44px;
+  margin-top: 14px;
+  padding: 12px 18px;
+  background: #39ff88;
+  color: #031008;
+  border: 1px solid #39ff88;
+  border-radius: 8px;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.unidad-card a:hover,
+.mision-card a:hover,
+a.boton:hover,
+button.boton:hover {
+  background: #baffd2;
+  box-shadow: 0 0 16px rgba(57, 255, 136, 0.3);
+}
+
+/* Evita que imágenes o iconos deformen las tarjetas */
+.unidad-card img,
+.mision-card img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.unidad-card .icono,
+.mision-card .icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(57, 255, 136, 0.4);
+  border-radius: 12px;
+  background: rgba(57, 255, 136, 0.08);
+  color: #39ff88;
+  font-size: 32px;
+}
+
+@media (max-width: 600px) {
+  .grid-unidades,
+  .grid-misiones {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .unidad-card,
+  .mision-card {
+    padding: 18px;
+  }
+}
+

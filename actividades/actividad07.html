@@ -1,0 +1,621 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 07 | Conexiones</title>
+
+<style>
+:root {
+    --fondo: #080b0a;
+    --panel: #111715;
+    --verde: #39ff88;
+    --texto: #e6ece8;
+    --gris: #777f7b;
+    --cable: #a3aaa6;
+    --rojo: #ff7777;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background: radial-gradient(circle at top, #15221a, var(--fondo) 65%);
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.contenedor {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.encabezado {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.etiqueta {
+    color: var(--verde);
+    letter-spacing: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    margin: 12px 0;
+}
+
+.descripcion {
+    color: #aeb8b1;
+    line-height: 1.6;
+}
+
+.panel {
+    background: rgba(17, 23, 21, 0.96);
+    border: 1px solid #344239;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 25px #0008;
+}
+
+.estado {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    color: #c4cdc7;
+    font-size: 14px;
+}
+
+.estado strong {
+    color: var(--verde);
+}
+
+.instrucciones {
+    border-left: 3px solid var(--verde);
+    padding: 10px 14px;
+    background: #17221b;
+    border-radius: 5px;
+    color: #d3ded6;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.tablero {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(20px, 7vw, 90px);
+    min-height: 410px;
+}
+
+.columna {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.columna h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #a9b6ad;
+    margin: 0 0 8px;
+}
+
+.terminal {
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #48534c;
+    background: #151b18;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--texto);
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+    transition: border-color .15s, background .15s;
+}
+
+.terminal:hover {
+    border-color: #9aa69d;
+    background: #202923;
+}
+
+.terminal.seleccionado {
+    border: 2px solid var(--verde);
+    background: #1c2a20;
+}
+
+.terminal.conectado {
+    border-color: #65736a;
+}
+
+.terminal.correcto {
+    border-color: var(--verde);
+}
+
+.terminal.incorrecto {
+    border-color: var(--rojo);
+}
+
+.punto {
+    width: 13px;
+    height: 13px;
+    min-width: 13px;
+    border: 2px solid #c0c8c2;
+    border-radius: 50%;
+    background: #080b0a;
+}
+
+.punto.seleccionado {
+    border-color: var(--verde);
+    box-shadow: 0 0 8px var(--verde);
+}
+
+#cables {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.cable {
+    fill: none;
+    stroke: var(--cable);
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: .85;
+}
+
+.cable-temporal {
+    stroke-dasharray: 7 6;
+    opacity: .65;
+}
+
+.controles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+button.accion, a.accion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--verde);
+    background: var(--verde);
+    color: #071009;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 12px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button.secundario, a.secundario {
+    background: transparent;
+    color: var(--texto);
+    border-color: #566159;
+}
+
+button.accion:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.mensaje {
+    min-height: 28px;
+    margin-top: 18px;
+    line-height: 1.5;
+    color: #c4cdc7;
+}
+
+.mensaje.error {
+    color: var(--rojo);
+}
+
+.mensaje.exito {
+    color: var(--verde);
+}
+
+#victoria {
+    display: none;
+    text-align: center;
+    border: 1px solid var(--verde);
+    padding: 24px;
+    border-radius: 12px;
+    background: #102017;
+    margin-top: 20px;
+}
+
+#victoria h2 {
+    color: var(--verde);
+}
+
+.pie {
+    text-align: center;
+    color: #87918a;
+    font-size: 12px;
+    margin: 25px 0;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .panel {
+        padding: 12px;
+    }
+
+    .tablero {
+        gap: 10px;
+    }
+
+    .terminal {
+        padding: 8px 6px;
+        font-size: 12px;
+        min-height: 62px;
+        gap: 6px;
+    }
+
+    .columna h2 {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .punto {
+        width: 10px;
+        height: 10px;
+        min-width: 10px;
+    }
+
+    .controles button,
+    .controles a {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="contenedor">
+
+    <header class="encabezado">
+        <div class="etiqueta">MENTE QUEST // SISTEMA DE REPARACIÓN</div>
+        <h1>Conecta los cables</h1>
+        <p class="descripcion">
+            Restablece el sistema relacionando los conceptos de lectura
+            con sus definiciones correctas.
+        </p>
+    </header>
+
+    <section class="panel">
+        <div class="estado">
+            <span>CONEXIONES: <strong id="contador">0 / 6</strong></span>
+            <span>ERRORES: <strong id="errores">0</strong></span>
+            <span>ESTADO: <strong id="estado">SIN REPARAR</strong></span>
+        </div>
+
+        <div class="instrucciones">
+            <strong>Instrucciones:</strong> selecciona un terminal de la izquierda
+            y después uno de la derecha. Los cables no tienen colores ni números
+            que revelen las respuestas. Si te equivocas al comprobar, perderás
+            una oportunidad. Dispones de <strong>3 oportunidades</strong>.
+        </div>
+
+        <div class="tablero" id="tablero">
+            <svg id="cables" aria-hidden="true"></svg>
+
+            <div class="columna">
+                <h2>Conceptos</h2>
+                <button class="terminal" data-lado="izq" data-id="idea">
+                    <span class="punto"></span> Idea principal
+                </button>
+                <button class="terminal" data-lado="izq" data-id="inferir">
+                    <span class="punto"></span> Inferencia
+                </button>
+                <button class="terminal" data-lado="izq" data-id="resumen">
+                    <span class="punto"></span> Resumen
+                </button>
+                <button class="terminal" data-lado="izq" data-id="detalles">
+                    <span class="punto"></span> Detalles
+                </button>
+                <button class="terminal" data-lado="izq" data-id="proposito">
+                    <span class="punto"></span> Propósito del autor
+                </button>
+                <button class="terminal" data-lado="izq" data-id="tono">
+                    <span class="punto"></span> Tono del texto
+                </button>
+            </div>
+
+            <div class="columna">
+                <h2>Definiciones</h2>
+                <button class="terminal" data-lado="der" data-id="tono">
+                    <span class="punto"></span> Actitud que transmite el texto
+                </button>
+                <button class="terminal" data-lado="der" data-id="detalles">
+                    <span class="punto"></span> Información que apoya una idea
+                </button>
+                <button class="terminal" data-lado="der" data-id="proposito">
+                    <span class="punto"></span> Razón por la que se escribió
+                </button>
+                <button class="terminal" data-lado="der" data-id="inferir">
+                    <span class="punto"></span> Conclusión obtenida a partir de pistas
+                </button>
+                <button class="terminal" data-lado="der" data-id="idea">
+                    <span class="punto"></span> Mensaje central del texto
+                </button>
+                <button class="terminal" data-lado="der" data-id="resumen">
+                    <span class="punto"></span> Versión breve de lo esencial
+                </button>
+            </div>
+        </div>
+
+        <div class="controles">
+            <button class="accion" id="comprobar">Comprobar conexiones</button>
+            <button class="accion secundario" id="desconectar">Desconectar selección</button>
+            <button class="accion secundario" id="reiniciar">Reiniciar misión</button>
+        </div>
+
+        <p class="mensaje" id="mensaje" role="status" aria-live="polite">
+            Selecciona un terminal para comenzar.
+        </p>
+
+        <div id="victoria">
+            <h2>¡Sistema restaurado!</h2>
+            <p>Relacionaste correctamente los seis conceptos de lectura.</p>
+            <p id="recompensa">Recompensa: 100 XP</p>
+            <a class="accion" href="actividad08.html">Siguiente misión →</a>
+        </div>
+    </section>
+
+    <div class="controles">
+        <a class="accion secundario" href="../unidades/unidad2.html">← Volver a Unidad 02</a>
+        <a class="accion secundario" href="../index.html">Inicio</a>
+    </div>
+
+    <footer class="pie">MENTE QUEST · ACTIVIDAD 07 · CONEXIONES LÓGICAS</footer>
+</div>
+
+<script src="../script.js"></script>
+<script>
+const tablero = document.getElementById("tablero");
+const svg = document.getElementById("cables");
+const mensaje = document.getElementById("mensaje");
+const contador = document.getElementById("contador");
+const erroresTexto = document.getElementById("errores");
+const estadoTexto = document.getElementById("estado");
+const comprobarBtn = document.getElementById("comprobar");
+const desconectarBtn = document.getElementById("desconectar");
+const reiniciarBtn = document.getElementById("reiniciar");
+const victoria = document.getElementById("victoria");
+
+let seleccionado = null;
+let conexiones = new Map();
+let errores = 0;
+let oportunidades = 3;
+let finalizada = false;
+
+const terminales = [...document.querySelectorAll(".terminal")];
+
+function mostrarMensaje(texto, tipo = "") {
+    mensaje.textContent = texto;
+    mensaje.className = "mensaje " + tipo;
+}
+
+function obtenerTerminal(lado, id) {
+    return terminales.find(t =>
+        t.dataset.lado === lado && t.dataset.id === id
+    );
+}
+
+function limpiarSeleccion() {
+    terminales.forEach(t => {
+        t.classList.remove("seleccionado");
+        t.querySelector(".punto").classList.remove("seleccionado");
+    });
+    seleccionado = null;
+}
+
+function seleccionarTerminal(terminal) {
+    if (finalizada) return;
+
+    const lado = terminal.dataset.lado;
+    const id = terminal.dataset.id;
+
+    if (seleccionado && seleccionado.lado === lado) {
+        limpiarSeleccion();
+    }
+
+    if (!seleccionado) {
+        seleccionado = { lado, id };
+        terminal.classList.add("seleccionado");
+        terminal.querySelector(".punto").classList.add("seleccionado");
+        mostrarMensaje("Terminal seleccionado. Elige su pareja del otro lado.");
+        return;
+    }
+
+    if (seleccionado.lado === lado) return;
+
+    const idIzq = lado === "izq" ? id : seleccionado.id;
+    const idDer = lado === "der" ? id : seleccionado.id;
+
+    // Cada terminal de la izquierda solo puede tener una conexión.
+    // Una conexión nueva reemplaza la anterior de ese concepto.
+    conexiones.set(idIzq, idDer);
+
+    limpiarSeleccion();
+    actualizarTablero();
+    mostrarMensaje("Conexión realizada. Comprueba todas cuando termines.");
+}
+
+function actualizarTablero() {
+    terminales.forEach(t => {
+        t.classList.remove("conectado", "correcto", "incorrecto");
+    });
+
+    for (const [izq, der] of conexiones) {
+        const a = obtenerTerminal("izq", izq);
+        const b = obtenerTerminal("der", der);
+        if (a) a.classList.add("conectado");
+        if (b) b.classList.add("conectado");
+    }
+
+    contador.textContent = `${conexiones.size} / 6`;
+    dibujarCables();
+}
+
+function dibujarCables() {
+    const rectTablero = tablero.getBoundingClientRect();
+    svg.setAttribute("viewBox", `0 0 ${rectTablero.width} ${rectTablero.height}`);
+    svg.innerHTML = "";
+
+    for (const [izq, der] of conexiones) {
+        const a = obtenerTerminal("izq", izq);
+        const b = obtenerTerminal("der", der);
+        if (!a || !b) continue;
+
+        const ra = a.getBoundingClientRect();
+        const rb = b.getBoundingClientRect();
+
+        const x1 = ra.right - rectTablero.left;
+        const y1 = ra.top + ra.height / 2 - rectTablero.top;
+        const x2 = rb.left - rectTablero.left;
+        const y2 = rb.top + rb.height / 2 - rectTablero.top;
+        const curva = Math.max(25, (x2 - x1) * 0.45);
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M ${x1} ${y1} C ${x1 + curva} ${y1}, ${x2 - curva} ${y2}, ${x2} ${y2}`);
+        path.setAttribute("class", "cable");
+        svg.appendChild(path);
+    }
+}
+
+terminales.forEach(t => {
+    t.addEventListener("click", () => seleccionarTerminal(t));
+});
+
+desconectarBtn.addEventListener("click", () => {
+    if (finalizada) return;
+
+    if (seleccionado) {
+        limpiarSeleccion();
+        mostrarMensaje("Selección cancelada.");
+        return;
+    }
+
+    mostrarMensaje("Selecciona primero un terminal para cancelar su conexión.");
+});
+
+comprobarBtn.addEventListener("click", () => {
+    if (finalizada) return;
+
+    if (conexiones.size !== 6) {
+        mostrarMensaje("Todavía faltan conexiones. Debes conectar los seis pares.", "error");
+        return;
+    }
+
+    let aciertos = 0;
+
+    for (const [izq, der] of conexiones) {
+        const a = obtenerTerminal("izq", izq);
+        const b = obtenerTerminal("der", der);
+        a.classList.remove("correcto", "incorrecto");
+        b.classList.remove("correcto", "incorrecto");
+
+        if (izq === der) {
+            aciertos++;
+            a.classList.add("correcto");
+            b.classList.add("correcto");
+        } else {
+            a.classList.add("incorrecto");
+            b.classList.add("incorrecto");
+        }
+    }
+
+    if (aciertos === 6) {
+        finalizada = true;
+        estadoTexto.textContent = "REPARADO";
+        mostrarMensaje("¡Excelente! Todas las conexiones son correctas.", "exito");
+        victoria.style.display = "block";
+        comprobarBtn.disabled = true;
+
+        const nuevaXP = window.MenteQuest
+            ? window.MenteQuest.completarActividad("actividad07", 100)
+            : false;
+
+        document.getElementById("recompensa").textContent = nuevaXP
+            ? "¡Has ganado 100 XP!"
+            : "Misión completada. Si ya la habías terminado, no se vuelven a sumar XP.";
+
+        return;
+    }
+
+    errores++;
+    oportunidades--;
+    erroresTexto.textContent = errores;
+
+    if (oportunidades <= 0) {
+        finalizada = true;
+        estadoTexto.textContent = "FALLO";
+        comprobarBtn.disabled = true;
+        mostrarMensaje(
+            `Sistema bloqueado. Acertaste ${aciertos} de 6 conexiones. Reinicia la misión para intentarlo de nuevo.`,
+            "error"
+        );
+        return;
+    }
+
+    mostrarMensaje(
+        `Hay conexiones incorrectas. Acertaste ${aciertos} de 6. Te quedan ${oportunidades} oportunidades.`,
+        "error"
+    );
+});
+
+reiniciarBtn.addEventListener("click", () => {
+    seleccionado = null;
+    conexiones.clear();
+    errores = 0;
+    oportunidades = 3;
+    finalizada = false;
+
+    erroresTexto.textContent = "0";
+    estadoTexto.textContent = "SIN REPARAR";
+    victoria.style.display = "none";
+    comprobarBtn.disabled = false;
+
+    limpiarSeleccion();
+    actualizarTablero();
+    mostrarMensaje("Misión reiniciada. Vuelve a conectar los seis pares.");
+});
+
+window.addEventListener("resize", dibujarCables);
+if ("ResizeObserver" in window) {
+    new ResizeObserver(dibujarCables).observe(tablero);
+}
+dibujarCables();
+</script>
+</body>
+</html>
+```

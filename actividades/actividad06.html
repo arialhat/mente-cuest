@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Actividad 06 | Detective de Ideas</title>
+<style>
+:root {
+  --fondo: #07110c;
+  --panel: #101d15;
+  --verde: #39ff88;
+  --texto: #effff4;
+  --suave: #a9c7b3;
+  --borde: #285b3c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at top, #153a25, transparent 65%), var(--fondo);
+  color: var(--texto);
+  font-family: Arial, sans-serif;
+}
+.contenedor { width: min(720px, 94%); margin: auto; padding: 24px 0 40px; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.logo { color: var(--verde); font-weight: 900; letter-spacing: 2px; }
+.etiqueta { color: var(--verde); border: 1px solid var(--borde); border-radius: 20px; padding: 6px 10px; font-size: 12px; }
+h1 { color: var(--verde); font-size: clamp(28px, 5vw, 40px); }
+.panel { background: var(--panel); border: 1px solid var(--borde); border-radius: 15px; padding: 20px; margin-top: 20px; }
+.texto { line-height: 1.9; background: #09150d; border-left: 4px solid var(--verde); border-radius: 8px; padding: 17px; }
+.suave { color: var(--suave); line-height: 1.7; }
+.opcion {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px;
+  margin: 10px 0;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background: #0b180f;
+  color: var(--texto);
+  cursor: pointer;
+}
+.opcion:hover:not(:disabled) { border-color: var(--verde); background: #14281b; }
+.opcion:disabled { cursor: default; opacity: .9; }
+.boton {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+  border: 1px solid var(--verde);
+  border-radius: 9px;
+  padding: 12px 16px;
+  background: var(--verde);
+  color: #06140b;
+  font-weight: bold;
+  cursor: pointer;
+}
+.secundario { color: var(--verde); background: transparent; }
+.estado { min-height: 28px; color: var(--suave); line-height: 1.6; }
+.oculto { display: none !important; }
+.barra { height: 8px; background: #203728; border-radius: 10px; overflow: hidden; margin: 12px 0; }
+.barra div { height: 100%; width: 0%; background: var(--verde); transition: width .3s; }
+.botones { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+footer { text-align: center; color: var(--suave); font-size: 13px; margin-top: 25px; }
+</style>
+</head>
+<body>
+<main class="contenedor">
+<header>
+  <div class="logo">◈ MENTE QUEST</div>
+  <div class="etiqueta">UNIDAD 02 · MISIÓN 06</div>
+</header>
+
+<h1>🕵️ Detective de Ideas</h1>
+<p class="suave">Analiza las pistas, identifica el mensaje central y demuestra que puedes leer entre líneas.</p>
+
+<section class="panel" id="introduccion">
+  <h2>📁 Expediente de investigación</h2>
+  <p class="suave">Tu misión es resolver tres casos. Lee cada texto con atención y selecciona la idea principal. Recuerda: los detalles apoyan el mensaje central, pero no siempre son la idea principal.</p>
+  <div class="botones">
+    <button class="boton" id="comenzar">Comenzar investigación</button>
+    <a class="boton secundario" href="../unidades/unidad2.html">Volver a Unidad 02</a>
+  </div>
+</section>
+
+<section class="panel oculto" id="juego">
+  <p class="suave" id="numero-caso">CASO 1 DE 3</p>
+  <div class="barra"><div id="progreso"></div></div>
+  <h2 id="titulo-caso"></h2>
+  <div class="texto" id="lectura"></div>
+  <h3>🔎 ¿Cuál es la idea principal?</h3>
+  <div id="opciones"></div>
+  <p class="estado" id="estado" role="status" aria-live="polite"></p>
+  <button class="boton" id="siguiente" disabled>Siguiente caso →</button>
+</section>
+
+<section class="panel oculto" id="resultado">
+  <h2 id="titulo-resultado">Investigación terminada</h2>
+  <p id="resumen" class="suave"></p>
+  <p id="recompensa"></p>
+  <div class="botones">
+    <button class="boton secundario" id="repetir">Repetir investigación</button>
+    <a class="boton" href="actividad07.html">Siguiente misión →</a>
+    <a class="boton secundario" href="../unidades/unidad2.html">Volver a Unidad 02</a>
+  </div>
+</section>
+
+<footer>MENTE QUEST · Cada texto es una nueva pista.</footer>
+</main>
+
+<script src="../script.js"></script>
+<script>
+(() => {
+  const casos = [
+    {
+      titulo: "Caso 01: La biblioteca",
+      lectura: "En la biblioteca escolar, los estudiantes encuentran libros de historia, ciencia y literatura. Algunos consultan información para sus tareas, mientras otros leen por curiosidad. Gracias a estos recursos, pueden aprender cosas nuevas y conocer diferentes puntos de vista.",
+      opciones: [
+        "La biblioteca permite aprender y descubrir información desde distintas fuentes.",
+        "Todos los estudiantes prefieren leer libros de historia.",
+        "La biblioteca solo sirve para hacer tareas."
+      ],
+      correcta: 0,
+      explicacion: "Correcto. Las diferentes actividades y libros son detalles que apoyan la idea general: la biblioteca ayuda a aprender y descubrir información."
+    },
+    {
+      titulo: "Caso 02: El cuidado del agua",
+      lectura: "En una escuela, varios alumnos notaron que las llaves quedaban abiertas después del recreo. Propusieron cerrar bien los grifos, reportar las fugas y colocar avisos cerca de los lavabos. Con pequeñas acciones, toda la comunidad escolar puede ayudar a cuidar el agua.",
+      opciones: [
+        "Los avisos deben ser de color verde.",
+        "Las pequeñas acciones de la comunidad ayudan a ahorrar agua.",
+        "Los alumnos solo deben cuidar el agua durante el recreo."
+      ],
+      correcta: 1,
+      explicacion: "¡Bien! Los avisos y las llaves son ejemplos. El mensaje central es que las acciones de la comunidad contribuyen al ahorro de agua."
+    },
+    {
+      titulo: "Caso 03: Leer con atención",
+      lectura: "Cuando una persona lee un texto difícil, puede detenerse, releer una oración y buscar el significado de una palabra desconocida. Estas estrategias le permiten relacionar las ideas y comprender mejor el mensaje del autor.",
+      opciones: [
+        "Las palabras difíciles siempre deben ignorarse.",
+        "Releer significa comenzar un libro diferente.",
+        "Usar estrategias de lectura ayuda a comprender mejor un texto."
+      ],
+      correcta: 2,
+      explicacion: "Exacto. Releer y buscar palabras son estrategias que apoyan la idea principal: leer de forma activa favorece la comprensión."
+    }
+  ];
+
+  let indice = 0;
+  let aciertos = 0;
+  let respondido = false;
+  let terminado = false;
+
+  const $ = id => document.getElementById(id);
+
+  function comenzar() {
+    indice = 0;
+    aciertos = 0;
+    respondido = false;
+    terminado = false;
+    $("introduccion").classList.add("oculto");
+    $("resultado").classList.add("oculto");
+    $("juego").classList.remove("oculto");
+    mostrarCaso();
+  }
+
+  function mostrarCaso() {
+    respondido = false;
+    const caso = casos[indice];
+    $("numero-caso").textContent = `CASO ${indice + 1} DE ${casos.length}`;
+    $("progreso").style.width = `${(indice / casos.length) * 100}%`;
+    $("titulo-caso").textContent = caso.titulo;
+    $("lectura").textContent = caso.lectura;
+    $("estado").textContent = "Lee el texto y selecciona la idea principal.";
+    $("siguiente").disabled = true;
+    $("siguiente").textContent = indice === casos.length - 1 ? "Ver resultado →" : "Siguiente caso →";
+    $("opciones").replaceChildren();
+
+    caso.opciones.forEach((opcion, i) => {
+      const boton = document.createElement("button");
+      boton.className = "opcion";
+      boton.textContent = opcion;
+      boton.addEventListener("click", () => responder(i));
+      $("opciones").appendChild(boton);
+    });
+  }
+
+  function responder(eleccion) {
+    if (respondido || terminado) return;
+    respondido = true;
+    const caso = casos[indice];
+    const botones = [...$("opciones").querySelectorAll("button")];
+    botones.forEach((boton, i) => {
+      boton.disabled = true;
+      if (i === caso.correcta) {
+        boton.style.borderColor = "#39ff88";
+        boton.style.background = "#173b25";
+      }
+    });
+
+    if (eleccion === caso.correcta) {
+      aciertos++;
+      $("estado").textContent = "¡Correcto! " + caso.explicacion;
+      $("estado").style.color = "#39ff88";
+    } else {
+      $("estado").textContent = "No exactamente. " + caso.explicacion;
+      $("estado").style.color = "#ffcc88";
+    }
+
+    $("progreso").style.width = `${((indice + 1) / casos.length) * 100}%`;
+    $("siguiente").disabled = false;
+  }
+
+  function verResultado() {
+    terminado = true;
+    $("juego").classList.add("oculto");
+    $("resultado").classList.remove("oculto");
+    const xp = Math.round((aciertos / casos.length) * 100);
+
+    $("titulo-resultado").textContent =
+      aciertos === 3 ? "🏆 ¡Detective experto!" : "🔎 Investigación completada";
+    $("resumen").textContent = `Resolviste ${aciertos} de ${casos.length} casos correctamente. Sigue practicando para mejorar tu comprensión lectora.`;
+    $("recompensa").textContent = `Recompensa: ${xp} XP`;
+
+    if (window.MenteQuest) {
+      window.MenteQuest.completarActividad("actividad06", xp);
+    }
+  }
+
+  $("comenzar").addEventListener("click", comenzar);
+  $("siguiente").addEventListener("click", () => {
+    if (!respondido) return;
+    if (indice < casos.length - 1) {
+      indice++;
+      mostrarCaso();
+    } else {
+      verResultado();
+    }
+  });
+  $("repetir").addEventListener("click", comenzar);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación final | Unidad 01</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="../script.js" defer></script>
+    <style>
+        .evaluacion{width:min(850px,90%);margin:45px auto 80px}
+        .panel{background:var(--panel);border:1px solid var(--borde);padding:25px;margin-bottom:22px}
+        .etiqueta{color:var(--verde);font-weight:900;letter-spacing:2px;font-size:.75rem}
+        h1{font-size:clamp(1.8rem,4vw,2.7rem)}
+        h1 span,.verde{color:var(--verde)}
+        .gris{color:var(--gris)}
+        .lectura{line-height:1.8;border-left:4px solid var(--verde)}
+        .pregunta{padding:18px;margin:18px 0;background:#101810;border:1px solid #294332}
+        .pregunta h3{margin-top:0}
+        .opcion{display:flex;gap:10px;align-items:flex-start;margin:13px 0;cursor:pointer;line-height:1.5}
+        .opcion input{accent-color:var(--verde);margin-top:5px}
+        .boton{display:inline-block;padding:13px 20px;margin-top:15px;background:var(--verde);color:#031008;font-weight:900;border:0;cursor:pointer;text-decoration:none}
+        .boton:focus-visible{outline:2px solid white;outline-offset:3px}
+        .resultado{display:none;border-color:var(--verde)}
+        .resultado h2{color:var(--verde)}
+        .enlaces{display:flex;gap:18px;flex-wrap:wrap;margin-top:25px}
+        .enlaces a{color:var(--verde)}
+        #aviso{min-height:24px;color:var(--verde)}
+    </style>
+</head>
+<body>
+<header class="barra-superior">
+    <a class="logo" href="../index.html">⬡ MENTE<span>QUEST</span></a>
+    <nav>
+        <a href="../index.html">Inicio</a>
+        <a href="../unidades/unidad1.html">Unidad 01</a>
+    </nav>
+    <div class="nivel-jugador">
+        <span>JUGADOR</span>
+        <strong id="xp">0 XP</strong>
+    </div>
+</header>
+
+<main class="evaluacion">
+    <section class="panel">
+        <p class="etiqueta">EVALUACIÓN FINAL / UNIDAD 01</p>
+        <h1>PRUEBA DE <span>COMPRENSIÓN</span></h1>
+        <p class="gris">Demuestra que puedes identificar ideas principales, reconocer detalles, interpretar palabras y comprender la estructura de un texto.</p>
+        <p><strong>Instrucciones:</strong> lee el texto y responde las cinco preguntas. Cada respuesta correcta vale 20 puntos.</p>
+    </section>
+
+    <section class="panel lectura">
+        <h2>El huerto de la escuela</h2>
+        <p>
+            Al comienzo del ciclo escolar, un grupo de estudiantes decidió
+            transformar un espacio vacío de su escuela en un huerto. Primero,
+            investigaron qué plantas podían crecer en su región y prepararon
+            la tierra.
+        </p>
+        <p>
+            Después, organizaron turnos para regar las plantas y retirar las
+            hierbas que competían con ellas por el espacio y los nutrientes.
+            También registraron semanalmente el crecimiento de cada planta.
+        </p>
+        <p>
+            Unas semanas después, observaron los primeros resultados. Aunque
+            algunas plantas crecieron más lentamente que otras, los estudiantes
+            comprendieron que la paciencia, la colaboración y la observación
+            eran fundamentales para cuidar el huerto.
+        </p>
+    </section>
+
+    <section class="panel">
+        <form id="formulario">
+            <div class="pregunta">
+                <h3>01. ¿Cuál es la idea principal del texto?</h3>
+                <label class="opcion"><input type="radio" name="p1" value="a" required> Los estudiantes aprendieron a cuidar un huerto mediante el trabajo organizado.</label>
+                <label class="opcion"><input type="radio" name="p1" value="b"> Todas las plantas crecen a la misma velocidad.</label>
+                <label class="opcion"><input type="radio" name="p1" value="c"> La escuela decidió comprar plantas nuevas.</label>
+            </div>
+
+            <div class="pregunta">
+                <h3>02. ¿Qué hicieron antes de plantar?</h3>
+                <label class="opcion"><input type="radio" name="p2" value="a" required> Vendieron las plantas.</label>
+                <label class="opcion"><input type="radio" name="p2" value="b"> Investigaron qué plantas podían crecer en su región y prepararon la tierra.</label>
+                <label class="opcion"><input type="radio" name="p2" value="c"> Dejaron de observar el terreno.</label>
+            </div>
+
+            <div class="pregunta">
+                <h3>03. En el texto, ¿qué significa que los estudiantes organizaron «turnos»?</h3>
+                <label class="opcion"><input type="radio" name="p3" value="a" required> Que todos debían trabajar al mismo tiempo.</label>
+                <label class="opcion"><input type="radio" name="p3" value="b"> Que nadie debía cuidar las plantas.</label>
+                <label class="opcion"><input type="radio" name="p3" value="c"> Que distribuyeron los momentos de trabajo entre los participantes.</label>
+            </div>
+
+            <div class="pregunta">
+                <h3>04. ¿Por qué registraban semanalmente el crecimiento?</h3>
+                <label class="opcion"><input type="radio" name="p4" value="a" required> Para observar y comparar los cambios de las plantas.</label>
+                <label class="opcion"><input type="radio" name="p4" value="b"> Para impedir que las plantas crecieran.</label>
+                <label class="opcion"><input type="radio" name="p4" value="c"> Para sustituir el riego.</label>
+            </div>
+
+            <div class="pregunta">
+                <h3>05. ¿Qué función cumple el último párrafo?</h3>
+                <label class="opcion"><input type="radio" name="p5" value="a" required> Presenta un problema sin resolver.</label>
+                <label class="opcion"><input type="radio" name="p5" value="b"> Expone los resultados y el aprendizaje de los estudiantes.</label>
+                <label class="opcion"><input type="radio" name="p5" value="c"> Introduce personajes de una historia fantástica.</label>
+            </div>
+
+            <button class="boton" type="submit">ENTREGAR EVALUACIÓN</button>
+            <p id="aviso" aria-live="polite"></p>
+        </form>
+    </section>
+
+    <section class="panel resultado" id="resultado" aria-live="polite">
+        <h2 id="titulo"></h2>
+        <p id="calificacion"></p>
+        <p id="comentario"></p>
+        <p class="gris">Esta evaluación registra tu resultado en esta página. No modifica los XP de las misiones.</p>
+        <a class="boton" href="../unidades/unidad1.html">VOLVER A UNIDAD 01</a>
+        <a class="boton" href="evaluacion2.html">IR A EVALUACIÓN 02 →</a>
+    </section>
+
+    <div class="enlaces">
+        <a href="../actividades/actividad05.html">← Última misión</a>
+        <a href="../index.html">Volver al inicio</a>
+    </div>
+</main>
+
+<footer>
+    <a class="logo" href="../index.html">⬡ MENTE<span>QUEST</span></a>
+    <p>Analiza las pistas. Comprende el mensaje.</p>
+</footer>
+
+<script>
+    const formulario = document.getElementById("formulario");
+    let enviada = false;
+
+    formulario.addEventListener("submit", function(event) {
+        event.preventDefault();
+        if (enviada) return;
+
+        const respuestas = new FormData(formulario);
+        const correctas = {
+            p1:"a",
+            p2:"b",
+            p3:"c",
+            p4:"a",
+            p5:"b"
+        };
+
+        let aciertos = 0;
+
+        for (const pregunta in correctas) {
+            if (respuestas.get(pregunta) === correctas[pregunta]) {
+                aciertos++;
+            }
+        }
+
+        enviada = true;
+        formulario.querySelectorAll("input, button").forEach(elemento => {
+            elemento.disabled = true;
+        });
+
+        const nota = aciertos * 20;
+
+        document.getElementById("titulo").textContent =
+            nota >= 80 ? "¡EVALUACIÓN SUPERADA!" : "EVALUACIÓN COMPLETADA";
+
+        document.getElementById("calificacion").textContent =
+            `Resultado: ${aciertos} de 5 respuestas correctas. Calificación: ${nota}/100.`;
+
+        document.getElementById("comentario").textContent =
+            nota >= 80
+                ? "¡Excelente trabajo! Has demostrado una buena comprensión del texto."
+                : "Buen intento. Repasa las misiones de la Unidad 01 y vuelve a practicar la identificación de ideas y detalles.";
+
+        document.getElementById("resultado").style.display = "block";
+        document.getElementById("aviso").textContent = "Evaluación enviada.";
+        document.getElementById("resultado").scrollIntoView({
+            behavior:"smooth",
+            block:"center"
+        });
+    });
+</script>
+</body>
+</html>

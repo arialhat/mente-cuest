@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Actividad 05 | Sudoku Lector</title>
+    <style>
+        :root {
+            --fondo: #07110c;
+            --panel: #101d15;
+            --verde: #39ff88;
+            --texto: #effff4;
+            --suave: #a9c7b3;
+            --borde: #285b3c;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(ellipse at top, #153a25, transparent 65%), var(--fondo);
+            color: var(--texto);
+            font-family: Arial, sans-serif;
+        }
+
+        .contenedor {
+            width: min(650px, 94%);
+            margin: auto;
+            padding: 24px 0 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            color: var(--verde);
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .etiqueta {
+            color: var(--verde);
+            border: 1px solid var(--borde);
+            border-radius: 20px;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        h1 {
+            color: var(--verde);
+            font-size: clamp(28px, 5vw, 40px);
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--borde);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        p {
+            line-height: 1.65;
+        }
+
+        .suave {
+            color: var(--suave);
+        }
+
+        .tablero {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            width: min(100%, 380px);
+            aspect-ratio: 1;
+            margin: 20px auto;
+            border: 3px solid var(--verde);
+            background: #061009;
+        }
+
+        .celda {
+            display: grid;
+            place-items: center;
+            border: 1px solid #285b3c;
+            color: var(--verde);
+            font-size: clamp(25px, 7vw, 38px);
+            font-weight: bold;
+            cursor: pointer;
+            background: #09150d;
+            user-select: none;
+        }
+
+        .celda:nth-child(4n + 1),
+        .celda:nth-child(4n + 2) {}
+
+        .celda.seleccionada {
+            background: #235c39;
+            box-shadow: inset 0 0 0 2px var(--verde);
+        }
+
+        .celda.fija {
+            color: var(--texto);
+            background: #14281b;
+            cursor: default;
+        }
+
+        .celda.error {
+            background: #642d35;
+            color: #fff;
+        }
+
+        .celda.bloque-derecha {
+            border-right: 3px solid var(--verde);
+        }
+
+        .celda.bloque-abajo {
+            border-bottom: 3px solid var(--verde);
+        }
+
+        .numeros {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .numero,
+        .boton {
+            padding: 12px 17px;
+            border-radius: 9px;
+            border: 1px solid var(--verde);
+            background: var(--verde);
+            color: #06140b;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .numero {
+            min-width: 48px;
+            font-size: 20px;
+        }
+
+        .boton.secundario,
+        .numero.borrar {
+            color: var(--verde);
+            background: transparent;
+        }
+
+        .botones {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .estado {
+            text-align: center;
+            min-height: 26px;
+            color: var(--suave);
+        }
+
+        .oculto {
+            display: none !important;
+        }
+
+        .palabra {
+            color: var(--verde);
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--suave);
+            font-size: 13px;
+            margin-top: 25px;
+        }
+
+        @media(max-width: 420px) {
+            .panel {
+                padding: 14px;
+            }
+
+            .celda {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="contenedor">
+        <header>
+            <div class="logo">◈ MENTE QUEST</div>
+            <div class="etiqueta">UNIDAD 01 · MISIÓN 05</div>
+        </header>
+
+        <h1>🔢 Sudoku Lector</h1>
+        <p class="suave">Usa la lógica para completar el tablero. Cada número debe aparecer una sola vez por fila,
+            columna y cuadrante.</p>
+
+        <section class="panel">
+            <h2>🎯 Objetivo de la misión</h2>
+            <p class="suave">Completa las casillas vacías con números del 1 al 4. No repitas números en ninguna fila,
+                columna ni bloque de 2×2.</p>
+
+            <div class="tablero" id="tablero" role="group" aria-label="Tablero de Sudoku"></div>
+
+            <p class="estado" id="estado" role="status" aria-live="polite">Selecciona una casilla vacía y elige un
+                número.</p>
+
+            <div class="numeros" aria-label="Elegir número">
+                <button class="numero" data-num="1">1</button>
+                <button class="numero" data-num="2">2</button>
+                <button class="numero" data-num="3">3</button>
+                <button class="numero" data-num="4">4</button>
+                <button class="numero borrar" data-num="0">⌫</button>
+            </div>
+
+            <div class="botones">
+                <button class="boton" id="comprobar">Comprobar tablero</button>
+                <button class="boton secundario" id="reiniciar">Reiniciar</button>
+            </div>
+        </section>
+
+        <section class="panel oculto" id="victoria">
+            <h2>🏆 ¡Misión completada!</h2>
+            <p>Resolviste el Sudoku usando lógica y concentración.</p>
+            <p class="palabra" id="recompensa"></p>
+            <div class="botones">
+                <a class="boton" href="actividad06.html" style="text-decoration:none">Siguiente misión →</a>
+                <a class="boton secundario" href="../unidades/unidad1.html" style="text-decoration:none">Volver a Unidad
+                    01</a>
+            </div>
+        </section>
+
+        <footer>MENTE QUEST · Entrena tu mente, mejora tu lectura.</footer>
+    </main>
+
+    <script src="../script.js"></script>
+    <script>
+        (() => {
+            const solucion = [
+                1, 2, 3, 4,
+                3, 4, 1, 2,
+                2, 1, 4, 3,
+                4, 3, 2, 1
+            ];
+
+            const inicial = [
+                1, 0, 0, 4,
+                0, 4, 1, 0,
+                0, 1, 4, 0,
+                4, 0, 0, 1
+            ];
+
+            let valores = [...inicial];
+            let seleccion = -1;
+            let terminado = false;
+
+            const tablero = document.getElementById("tablero");
+            const estado = document.getElementById("estado");
+            const victoria = document.getElementById("victoria");
+            const comprobar = document.getElementById("comprobar");
+
+            function dibujar() {
+                tablero.replaceChildren();
+
+                valores.forEach((valor, i) => {
+                    const celda = document.createElement("button");
+                    celda.type = "button";
+                    celda.className = "celda";
+                    celda.setAttribute("aria-label", `Fila ${Math.floor(i / 4) + 1}, columna ${i % 4 + 1}${valor ? ", número " + valor : ", vacía"}`);
+
+                    if (inicial[i] !== 0) celda.classList.add("fija");
+                    if (i === seleccion) celda.classList.add("seleccionada");
+                    if (i % 4 === 1) celda.classList.add("bloque-derecha");
+                    if (Math.floor(i / 4) === 1) celda.classList.add("bloque-abajo");
+
+                    celda.textContent = valor || "";
+                    celda.disabled = terminado || inicial[i] !== 0;
+                    celda.addEventListener("click", () => {
+                        seleccion = i;
+                        estado.textContent = "Casilla seleccionada. Elige un número.";
+                        dibujar();
+                    });
+                    tablero.appendChild(celda);
+                });
+            }
+
+            function colocarNumero(numero) {
+                if (terminado) return;
+                if (seleccion === -1) {
+                    estado.textContent = "Primero selecciona una casilla vacía.";
+                    return;
+                }
+                if (inicial[seleccion] !== 0) {
+                    estado.textContent = "Esa casilla no se puede modificar.";
+                    return;
+                }
+
+                valores[seleccion] = numero;
+                dibujar();
+                estado.textContent = numero === 0 ? "Casilla borrada." : "Número colocado. ¡Sigue!";
+            }
+
+            document.querySelectorAll("[data-num]").forEach(boton => {
+                boton.addEventListener("click", () => colocarNumero(Number(boton.dataset.num)));
+            });
+
+            function comprobarTablero() {
+                if (terminado) return;
+
+                const vacias = valores.filter(v => v === 0).length;
+                if (vacias > 0) {
+                    estado.textContent = `Todavía hay ${vacias} casillas vacías. ¡Continúa!`;
+                    return;
+                }
+
+                if (valores.every((v, i) => v === solucion[i])) {
+                    terminado = true;
+                    estado.textContent = "¡Perfecto! Sudoku resuelto.";
+                    victoria.classList.remove("oculto");
+                    comprobar.disabled = true;
+                    document.querySelectorAll("[data-num]").forEach(b => b.disabled = true);
+                    document.getElementById("recompensa").textContent = "+100 XP";
+
+                    if (window.MenteQuest) {
+                        window.MenteQuest.completarActividad("actividad05", 100);
+                    }
+                    dibujar();
+                } else {
+                    estado.textContent = "Hay algún número incorrecto. Revisa filas, columnas y bloques.";
+                    tablero.querySelectorAll(".celda").forEach((celda, i) => {
+                        celda.classList.toggle("error", valores[i] !== 0 && valores[i] !== solucion[i]);
+                    });
+                }
+            }
+
+            comprobar.addEventListener("click", comprobarTablero);
+
+            document.getElementById("reiniciar").addEventListener("click", () => {
+                valores = [...inicial];
+                seleccion = -1;
+                terminado = false;
+                victoria.classList.add("oculto");
+                comprobar.disabled = false;
+                document.querySelectorAll("[data-num]").forEach(b => b.disabled = false);
+                estado.textContent = "Tablero reiniciado. ¡Inténtalo otra vez!";
+                dibujar();
+            });
+
+            dibujar();
+        })();
+    </script>
+</body>
+
+</html>

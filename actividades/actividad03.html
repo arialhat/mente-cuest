@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07110c">
+  <title>Actividad 03 | Reconstruye el mensaje</title>
+
+  <style>
+    :root {
+      --fondo: #07110c;
+      --panel: #101d15;
+      --verde: #39ff88;
+      --texto: #effff4;
+      --secundario: #a9c7b3;
+      --borde: #285b3c;
+      --rojo: #ff6868;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at top, #163523 0%, transparent 60%),
+        var(--fondo);
+      color: var(--texto);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .contenedor {
+      width: min(900px, 92%);
+      margin: 0 auto;
+      padding: 24px 0 45px;
+    }
+
+    .barra-superior {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .logo {
+      color: var(--verde);
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    .etiqueta {
+      padding: 6px 12px;
+      border: 1px solid var(--borde);
+      border-radius: 30px;
+      color: var(--verde);
+      font-size: 13px;
+    }
+
+    h1 {
+      color: var(--verde);
+      font-size: clamp(27px, 5vw, 43px);
+      line-height: 1.15;
+      margin: 10px 0;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-top: 0;
+    }
+
+    .introduccion {
+      color: var(--secundario);
+      margin-bottom: 25px;
+    }
+
+    .panel {
+      background: rgba(16, 29, 21, 0.96);
+      border: 1px solid var(--borde);
+      border-radius: 16px;
+      padding: clamp(16px, 4vw, 26px);
+      margin-bottom: 20px;
+      box-shadow: 0 8px 28px #0004;
+    }
+
+    .instrucciones {
+      color: var(--secundario);
+      font-size: 14px;
+    }
+
+    .espacios {
+      display: grid;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .espacio {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px dashed #477d58;
+      border-radius: 10px;
+      background: #09140d;
+      text-align: left;
+      color: var(--texto);
+      cursor: pointer;
+      overflow-wrap: anywhere;
+    }
+
+    .numero {
+      display: grid;
+      place-items: center;
+      flex: 0 0 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #1b3926;
+      color: var(--verde);
+      font-weight: bold;
+    }
+
+    .espacio.seleccionado {
+      border: 2px solid var(--verde);
+      background: #183b26;
+    }
+
+    .espacio.vacio {
+      color: #789383;
+    }
+
+    .piezas {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .pieza {
+      min-height: 65px;
+      padding: 12px;
+      border: 1px solid #34764a;
+      border-radius: 10px;
+      background: #14281b;
+      color: var(--texto);
+      cursor: pointer;
+      overflow-wrap: anywhere;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .pieza:hover,
+    .espacio:hover {
+      border-color: var(--verde);
+    }
+
+    .pieza:focus-visible,
+    .espacio:focus-visible,
+    .boton:focus-visible,
+    .respuesta:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 3px;
+    }
+
+    .pieza:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .botones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .boton {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 45px;
+      padding: 11px 17px;
+      border: 1px solid var(--verde);
+      border-radius: 9px;
+      background: var(--verde);
+      color: #06140b;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .boton.secundario {
+      background: transparent;
+      color: var(--verde);
+    }
+
+    .boton:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .mensaje {
+      min-height: 28px;
+      margin-top: 14px;
+      font-weight: bold;
+    }
+
+    .mensaje.error {
+      color: var(--rojo);
+    }
+
+    .mensaje.exito {
+      color: var(--verde);
+    }
+
+    .barra-fondo {
+      height: 9px;
+      margin: 12px 0;
+      overflow: hidden;
+      background: #26392c;
+      border-radius: 20px;
+    }
+
+    .barra {
+      height: 100%;
+      width: 0;
+      background: var(--verde);
+      transition: width 0.25s;
+    }
+
+    .pregunta {
+      margin: 20px 0;
+      padding: 16px;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      background: #0a160e;
+    }
+
+    .respuesta {
+      display: block;
+      width: 100%;
+      padding: 11px;
+      margin-top: 9px;
+      border: 1px solid #355d40;
+      border-radius: 8px;
+      background: #14251a;
+      color: var(--texto);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .respuesta.elegida {
+      border: 2px solid var(--verde);
+      background: #1b3b27;
+    }
+
+    .respuesta:disabled {
+      cursor: default;
+      opacity: 0.85;
+    }
+
+    .oculto {
+      display: none !important;
+    }
+
+    .resultado {
+      text-align: center;
+      padding: 28px 10px;
+    }
+
+    .resultado .puntos {
+      color: var(--verde);
+      font-size: 42px;
+      font-weight: 900;
+    }
+
+    footer {
+      padding-top: 15px;
+      color: var(--secundario);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 520px) {
+      .piezas {
+        grid-template-columns: 1fr;
+      }
+
+      .boton {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="contenedor">
+    <header class="barra-superior">
+      <div class="logo">◈ MENTE QUEST</div>
+      <div class="etiqueta">UNIDAD 01 · MISIÓN 03</div>
+    </header>
+
+    <section>
+      <h1>Reconstruye el mensaje</h1>
+      <p class="introduccion">
+        Recupera el orden de una historia y demuestra que sabes identificar
+        su inicio, desarrollo y conclusión.
+      </p>
+    </section>
+    <section class="panel" id="panel-lectura">
+      <h2>📖 Lectura: Una idea que cambió la escuela</h2>
+
+      <p>
+        Una mañana, Ana entró a la biblioteca de su escuela para buscar
+        información para una tarea. Mientras revisaba los estantes,
+        encontró un libro antiguo que hablaba sobre la importancia del agua
+        y las consecuencias de desperdiciarla.
+      </p>
+
+      <p>
+        Intrigada por el tema, Ana comenzó a leer. Descubrió que pequeñas
+        acciones, como cerrar la llave mientras se cepillaba los dientes,
+        reparar las fugas y reutilizar el agua cuando fuera posible,
+        podían ayudar a cuidar este recurso.
+      </p>
+
+      <p>
+        Al día siguiente, Ana compartió lo que había aprendido con sus
+        compañeros. Al principio, algunos pensaron que sus acciones no
+        harían una gran diferencia. Sin embargo, Ana les explicó que,
+        cuando muchas personas colaboran, los pequeños esfuerzos pueden
+        producir resultados importantes.
+      </p>
+
+      <p>
+        La profesora propuso convertir la idea en un proyecto escolar.
+        Los estudiantes prepararon carteles, colocaron recordatorios cerca
+        de los lavamanos y organizaron una campaña para evitar el desperdicio
+        de agua.
+      </p>
+
+      <p>
+        Después de varias semanas, la comunidad escolar comenzó a prestar
+        más atención al consumo de agua. Ana comprendió que leer no solo
+        sirve para obtener información: también puede ayudarnos a reflexionar,
+        compartir conocimientos y actuar para mejorar nuestro entorno.
+      </p>
+
+      <p><strong>Idea principal:</strong> La lectura puede inspirar acciones positivas cuando comprendemos la información y la ponemos en práctica.</p>
+    </section>
+    <section class="panel" id="panel-juego">
+      <h2>01. Repara la secuencia</h2>
+      <p class="instrucciones">
+        Selecciona una pieza y después el espacio donde quieras colocarla.
+        También puedes seleccionar dos espacios ocupados para intercambiar
+        sus piezas. No necesitas arrastrarlas.
+      </p>
+
+      <div class="barra-fondo" aria-label="Progreso del rompecabezas">
+        <div class="barra" id="barra-rompecabezas"></div>
+      </div>
+      <p id="contador-piezas">0 de 4 espacios ocupados</p>
+
+      <h3>Secuencia reconstruida</h3>
+      <div class="espacios" id="espacios"></div>
+
+      <h3>Fragmentos disponibles</h3>
+      <div class="piezas" id="piezas"></div>
+
+      <div class="botones">
+        <button class="boton secundario" id="btn-reiniciar" type="button">
+          Reiniciar
+        </button>
+        <button class="boton" id="btn-comprobar" type="button">
+          Comprobar orden
+        </button>
+      </div>
+
+      <p class="mensaje" id="mensaje-rompecabezas" role="status"
+         aria-live="polite"></p>
+    </section>
+
+    <section class="panel oculto" id="panel-cuestionario">
+      <h2>02. Prueba de comprensión</h2>
+      <p class="instrucciones">
+        Lee cada pregunta y elige la respuesta que consideres correcta.
+      </p>
+
+      <div class="barra-fondo">
+        <div class="barra" id="barra-cuestionario"></div>
+      </div>
+      <p id="contador-preguntas">Pregunta 1 de 5</p>
+
+      <div id="zona-pregunta"></div>
+      <p class="mensaje" id="mensaje-pregunta" role="status"
+         aria-live="polite"></p>
+
+      <button class="boton" id="btn-siguiente" type="button" disabled>
+        Siguiente pregunta
+      </button>
+    </section>
+
+    <section class="panel oculto" id="panel-resultado">
+      <div class="resultado">
+        <h2>¡Misión terminada!</h2>
+        <p id="mensaje-final">Has terminado la actividad.</p>
+        <div class="puntos" id="puntuacion">0/100 XP</div>
+        <p id="detalle-final"></p>
+        <div class="botones">
+          <button class="boton secundario" id="btn-repetir" type="button">
+            Volver a intentarlo
+          </button>
+          <a class="boton" href="actividad04.html">Siguiente misión →</a>
+          <a class="boton secundario" href="../unidades/unidad1.html">
+            Volver a la Unidad 01
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      MENTE QUEST · Leer, comprender y pensar mejor.
+    </footer>
+  </main>
+
+  <script src="../script.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const fragmentos = [
+        {
+          id: "inicio",
+          texto: "En la escuela, Ana encontró un libro antiguo en la biblioteca."
+        },
+        {
+          id: "descubrimiento",
+          texto: "Al leerlo, descubrió una historia que explicaba cómo cuidar el agua."
+        },
+        {
+          id: "aprendizaje",
+          texto: "Inspirada por la lectura, compartió las ideas con sus compañeros."
+        },
+        {
+          id: "conclusion",
+          texto: "Finalmente, el grupo organizó una campaña para ahorrar agua."
+        }
+      ];
+
+      const preguntas = [
+        {
+          texto: "¿Dónde encontró Ana el libro?",
+          opciones: ["En la biblioteca", "En el patio", "En su casa"],
+          correcta: 0,
+          explicacion: "El texto dice que lo encontró en la biblioteca escolar."
+        },
+        {
+          texto: "¿Qué descubrió Ana al leer?",
+          opciones: [
+            "Una receta de cocina",
+            "Una historia sobre el cuidado del agua",
+            "Un mapa de la escuela"
+          ],
+          correcta: 1,
+          explicacion: "La lectura le enseñó ideas para cuidar el agua."
+        },
+        {
+          texto: "¿Qué hizo Ana después de leer?",
+          opciones: [
+            "Guardó el libro y no hizo nada",
+            "Se fue a dormir",
+            "Compartió las ideas con sus compañeros"
+          ],
+          correcta: 2,
+          explicacion: "Ana compartió lo aprendido con sus compañeros."
+        },
+        {
+          texto: "¿Cuál fue el resultado final?",
+          opciones: [
+            "El grupo organizó una campaña para ahorrar agua",
+            "La biblioteca cerró",
+            "Ana perdió el libro"
+          ],
+          correcta: 0,
+          explicacion: "La campaña fue la acción final del grupo."
+        },
+        {
+          texto: "¿Cuál es la enseñanza principal de la historia?",
+          opciones: [
+            "Los libros solo sirven para entretener",
+            "La lectura puede inspirar acciones positivas",
+            "Trabajar en grupo nunca funciona"
+          ],
+          correcta: 1,
+          explicacion: "La lectura ayudó a transformar una idea en una acción."
+        }
+      ];
+
+      const $ = (id) => document.getElementById(id);
+
+      const espacios = $("espacios");
+      const piezas = $("piezas");
+      const mensajeRompecabezas = $("mensaje-rompecabezas");
+
+      let colocadas = [null, null, null, null];
+      let seleccion = null;
+      let cuestionarioActual = 0;
+      let aciertos = 0;
+      let respondida = false;
+      let actividadTerminada = false;
+
+      function mezclar(lista) {
+        const copia = [...lista];
+
+        for (let i = copia.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copia[i], copia[j]] = [copia[j], copia[i]];
+        }
+
+        return copia;
+      }
+
+      function fragmentoPorId(id) {
+        return fragmentos.find((fragmento) => fragmento.id === id);
+      }
+
+      function renderizar() {
+        espacios.replaceChildren();
+        piezas.replaceChildren();
+
+        colocadas.forEach((id, indice) => {
+          const boton = document.createElement("button");
+          boton.type = "button";
+          boton.className = "espacio";
+          boton.setAttribute("aria-label", "Espacio " + (indice + 1));
+
+          const numero = document.createElement("span");
+          numero.className = "numero";
+          numero.textContent = indice + 1;
+          boton.appendChild(numero);
+
+          const texto = document.createElement("span");
+
+          if (id === null) {
+            boton.classList.add("vacio");
+            texto.textContent = "Selecciona una pieza para colocarla aquí";
+          } else {
+            texto.textContent = fragmentoPorId(id).texto;
+          }
+
+          boton.appendChild(texto);
+
+          if (seleccion === indice) {
+            boton.classList.add("seleccionado");
+            boton.setAttribute("aria-pressed", "true");
+          } else {
+            boton.setAttribute("aria-pressed", "false");
+          }
+
+          boton.addEventListener("click", () => manejarEspacio(indice));
+          espacios.appendChild(boton);
+        });
+
+        const disponibles = fragmentos.filter(
+          (fragmento) => !colocadas.includes(fragmento.id)
+        );
+
+        disponibles.forEach((fragmento) => {
+          const boton = document.createElement("button");
+          boton.type = "button";
+          boton.className = "pieza";
+          boton.textContent = fragmento.texto;
+          boton.addEventListener("click", () => {
+            if (actividadTerminada) return;
+            const destino = seleccion !== null
+              ? seleccion
+              : colocadas.findIndex((id) => id === null);
+
+            if (destino === -1) {
+              mensajeRompecabezas.textContent =
+                "Todos los espacios están ocupados. Selecciona uno para cambiar una pieza.";
+              mensajeRompecabezas.className = "mensaje error";
+              return;
+            }
+
+            colocadas[destino] = fragmento.id;
+            seleccion = null;
+            mensajeRompecabezas.textContent = "";
+            renderizar();
+            actualizarContador();
+          });
+          piezas.appendChild(boton);
+        });
+
+        actualizarContador();
+      }
+
+      function manejarEspacio(indice) {
+        if (actividadTerminada) return;
+
+        if (seleccion === null) {
+          if (colocadas[indice] === null) {
+            mensajeRompecabezas.textContent =
+              "Primero selecciona un fragmento disponible.";
+            mensajeRompecabezas.className = "mensaje error";
+            return;
+          }
+
+          seleccion = indice;
+        } else if (seleccion === indice) {
+          seleccion = null;
+        } else {
+          [colocadas[seleccion], colocadas[indice]] =
+            [colocadas[indice], colocadas[seleccion]];
+          seleccion = null;
+          mensajeRompecabezas.textContent = "";
+        }
+
+        renderizar();
+      }
+
+      function actualizarContador() {
+        const ocupados = colocadas.filter((id) => id !== null).length;
+        $("contador-piezas").textContent =
+          ocupados + " de 4 espacios ocupados";
+        $("barra-rompecabezas").style.width =
+          (ocupados / 4 * 100) + "%";
+      }
+
+      function comprobarOrden() {
+        if (actividadTerminada) return;
+
+        if (colocadas.some((id) => id === null)) {
+          mensajeRompecabezas.textContent =
+            "Te faltan fragmentos. Completa los cuatro espacios.";
+          mensajeRompecabezas.className = "mensaje error";
+          return;
+        }
+
+        const correcto = fragmentos.every(
+          (fragmento, indice) => colocadas[indice] === fragmento.id
+        );
+
+        if (!correcto) {
+          mensajeRompecabezas.textContent =
+            "Todavía no es correcto. Piensa en el inicio, el descubrimiento, la acción y el resultado.";
+          mensajeRompecabezas.className = "mensaje error";
+          return;
+        }
+
+        actividadTerminada = true;
+        mensajeRompecabezas.textContent =
+          "¡Excelente! Reconstruiste la historia correctamente.";
+        mensajeRompecabezas.className = "mensaje exito";
+
+        $("btn-comprobar").disabled = true;
+        $("btn-reiniciar").disabled = true;
+        $("panel-cuestionario").classList.remove("oculto");
+        $("panel-cuestionario").scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+        mostrarPregunta();
+      }
+
+      function mostrarPregunta() {
+        respondida = false;
+        const pregunta = preguntas[cuestionarioActual];
+
+        $("contador-preguntas").textContent =
+          "Pregunta " + (cuestionarioActual + 1) + " de " + preguntas.length;
+        $("barra-cuestionario").style.width =
+          (cuestionarioActual / preguntas.length * 100) + "%";
+        $("mensaje-pregunta").textContent = "";
+        $("mensaje-pregunta").className = "mensaje";
+        $("btn-siguiente").disabled = true;
+        $("btn-siguiente").textContent =
+          cuestionarioActual === preguntas.length - 1
+            ? "Ver resultado"
+            : "Siguiente pregunta";
+
+        const zona = $("zona-pregunta");
+        zona.replaceChildren();
+
+        const bloque = document.createElement("div");
+        bloque.className = "pregunta";
+
+        const titulo = document.createElement("h3");
+        titulo.textContent =
+          (cuestionarioActual + 1) + ". " + pregunta.texto;
+        bloque.appendChild(titulo);
+
+        pregunta.opciones.forEach((opcion, indice) => {
+          const boton = document.createElement("button");
+          boton.type = "button";
+          boton.className = "respuesta";
+          boton.textContent = opcion;
+
+          boton.addEventListener("click", () => {
+            if (respondida) return;
+
+            respondida = true;
+            const esCorrecta = indice === pregunta.correcta;
+
+            if (esCorrecta) aciertos++;
+
+            bloque.querySelectorAll(".respuesta").forEach((respuesta) => {
+              respuesta.disabled = true;
+            });
+
+            boton.classList.add("elegida");
+            $("mensaje-pregunta").textContent =
+              (esCorrecta ? "¡Correcto! " : "No exactamente. ") +
+              pregunta.explicacion;
+            $("mensaje-pregunta").className =
+              "mensaje " + (esCorrecta ? "exito" : "error");
+            $("btn-siguiente").disabled = false;
+          });
+
+          bloque.appendChild(boton);
+        });
+
+        zona.appendChild(bloque);
+      }
+
+      function siguientePregunta() {
+        if (!respondida) return;
+
+        if (cuestionarioActual < preguntas.length - 1) {
+          cuestionarioActual++;
+          mostrarPregunta();
+        } else {
+          mostrarResultado();
+        }
+      }
+
+      function mostrarResultado() {
+        $("panel-cuestionario").classList.add("oculto");
+        $("panel-resultado").classList.remove("oculto");
+        $("barra-cuestionario").style.width = "100%";
+
+        const xp = aciertos * 20;
+        $("puntuacion").textContent = xp + "/100 XP";
+        $("mensaje-final").textContent =
+          aciertos >= 4
+            ? "¡Buen trabajo, explorador!"
+            : "Misión completada. Sigue practicando para mejorar.";
+        $("detalle-final").textContent =
+          "Respuestas correctas: " + aciertos + " de " + preguntas.length + ".";
+
+        // Conserva el sistema de XP existente y evita premios repetidos.
+        if (window.MenteQuest &&
+            typeof window.MenteQuest.completarActividad === "function") {
+          window.MenteQuest.completarActividad("actividad03", xp);
+        }
+
+        $("panel-resultado").scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+      function reiniciarTodo() {
+        colocadas = [null, null, null, null];
+        seleccion = null;
+        cuestionarioActual = 0;
+        aciertos = 0;
+        respondida = false;
+        actividadTerminada = false;
+
+        $("panel-cuestionario").classList.add("oculto");
+        $("panel-resultado").classList.add("oculto");
+        $("btn-comprobar").disabled = false;
+        $("btn-reiniciar").disabled = false;
+
+        mensajeRompecabezas.textContent = "";
+        mensajeRompecabezas.className = "mensaje";
+
+        renderizar();
+        $("panel-juego").scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+      $("btn-comprobar").addEventListener("click", comprobarOrden);
+      $("btn-reiniciar").addEventListener("click", reiniciarTodo);
+      $("btn-siguiente").addEventListener("click", siguientePregunta);
+      $("btn-repetir").addEventListener("click", reiniciarTodo);
+
+      // Inicia la actividad al cargar la página.
+      renderizar();
+    })();
+  </script>
+</body>
+</html>
+
+

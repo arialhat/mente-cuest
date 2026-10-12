@@ -1,0 +1,646 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Actividad 04 | Snake Lector</title>
+
+<style>
+:root {
+  --fondo: #07110c;
+  --panel: #101d15;
+  --verde: #39ff88;
+  --texto: #effff4;
+  --suave: #a9c7b3;
+  --borde: #285b3c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at top, #153a25, transparent 65%), var(--fondo);
+  color: var(--texto);
+  font-family: Arial, sans-serif;
+}
+
+.contenedor {
+  width: min(700px, 94%);
+  margin: auto;
+  padding: 22px 0 40px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.logo { color: var(--verde); font-weight: 900; letter-spacing: 2px; }
+.etiqueta { color: var(--verde); border: 1px solid var(--borde); padding: 5px 10px; border-radius: 25px; font-size: 12px; }
+
+h1 { color: var(--verde); font-size: clamp(28px, 5vw, 42px); margin-bottom: 8px; }
+h2 { margin-top: 0; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 18px 0;
+}
+
+.descripcion { color: var(--suave); line-height: 1.7; }
+
+.palabra {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.letra {
+  width: 48px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #34764a;
+  border-radius: 9px;
+  background: #09150d;
+  color: var(--suave);
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.letra.lista {
+  background: var(--verde);
+  color: #07110c;
+  box-shadow: 0 0 15px #39ff8850;
+}
+
+.estadisticas {
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.estadistica {
+  flex: 1;
+  padding: 10px 5px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background: #09150d;
+}
+
+.estadistica small { display: block; color: var(--suave); }
+.estadistica strong { color: var(--verde); font-size: 21px; }
+
+.tablero {
+  width: min(100%, 440px);
+  margin: auto;
+  border: 2px solid #34764a;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #061009;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  touch-action: none;
+}
+
+.estado {
+  text-align: center;
+  color: var(--suave);
+  min-height: 24px;
+  line-height: 1.5;
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+button, a { font: inherit; }
+
+.boton {
+  border: 1px solid var(--verde);
+  border-radius: 9px;
+  background: var(--verde);
+  color: #06140b;
+  padding: 11px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.boton.secundario { background: transparent; color: var(--verde); }
+
+.controles {
+  display: grid;
+  grid-template-columns: repeat(3, 58px);
+  justify-content: center;
+  gap: 7px;
+  margin: 18px 0 8px;
+}
+
+.direccion {
+  width: 58px;
+  height: 48px;
+  border: 1px solid #34764a;
+  border-radius: 9px;
+  color: var(--verde);
+  background: #14281b;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.vacio { visibility: hidden; }
+
+.oculto { display: none !important; }
+
+.pregunta {
+  padding: 14px;
+  margin: 12px 0;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+.respuesta {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  margin-top: 8px;
+  background: #14281b;
+  color: var(--texto);
+  border: 1px solid #34764a;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.respuesta:disabled { opacity: .8; cursor: default; }
+.mensaje { min-height: 25px; color: var(--suave); }
+.exito { color: var(--verde); }
+
+footer { text-align: center; color: var(--suave); font-size: 13px; margin-top: 25px; }
+
+@media(max-width: 420px) {
+  .panel { padding: 14px; }
+  .letra { width: 42px; height: 46px; }
+}
+</style>
+</head>
+
+<body>
+<main class="contenedor">
+
+<header>
+  <div class="logo">◈ MENTE QUEST</div>
+  <div class="etiqueta">UNIDAD 01 · MISIÓN 04</div>
+</header>
+
+<h1>🐍 Snake Lector</h1>
+<p class="descripcion">Controla la viborita, recoge las letras en orden y descubre la palabra secreta.</p>
+
+<section class="panel">
+  <h2>📚 Tu objetivo</h2>
+  <p class="descripcion">
+    La primera palabra es <strong>LEER</strong>. Recoge las letras en el orden
+    indicado. Evita las paredes y tu propio cuerpo. Cuando completes la palabra,
+    superarás la prueba de comprensión.
+  </p>
+
+  <div class="palabra" id="palabra"></div>
+
+  <div class="estadisticas">
+    <div class="estadistica"><small>PUNTOS</small><strong id="puntos">0</strong></div>
+    <div class="estadistica"><small>LETRAS</small><strong id="progreso">0/4</strong></div>
+    <div class="estadistica"><small>RÉCORD</small><strong id="record">0</strong></div>
+  </div>
+
+  <div class="tablero">
+    <canvas id="juego" width="400" height="400"
+      aria-label="Juego de la viborita. Usa las flechas para moverte."></canvas>
+  </div>
+
+  <p class="estado" id="estado" role="status" aria-live="polite">
+    Pulsa Iniciar para comenzar.
+  </p>
+
+  <div class="botones">
+    <button class="boton" id="iniciar">Iniciar misión</button>
+    <button class="boton secundario" id="pausa">Pausar</button>
+    <button class="boton secundario" id="reiniciar">Reiniciar</button>
+  </div>
+
+  <div class="controles">
+    <span class="vacio"></span>
+    <button class="direccion" data-dir="arriba" aria-label="Arriba">▲</button>
+    <span class="vacio"></span>
+    <button class="direccion" data-dir="izquierda" aria-label="Izquierda">◀</button>
+    <button class="direccion" data-dir="abajo" aria-label="Abajo">▼</button>
+    <button class="direccion" data-dir="derecha" aria-label="Derecha">▶</button>
+  </div>
+
+  <p class="estado">PC: usa las flechas del teclado. Celular: toca las flechas.</p>
+</section>
+
+<section class="panel oculto" id="zona-prueba">
+  <h2>🧠 Prueba de comprensión</h2>
+  <p class="descripcion">Lee el texto y responde la pregunta para terminar la misión.</p>
+  <p>
+    Comprender una lectura significa identificar sus ideas principales,
+    relacionarlas con nuestros conocimientos y reflexionar sobre su significado.
+    No basta con pronunciar las palabras: debemos entender el mensaje.
+  </p>
+  <div id="pregunta"></div>
+  <p class="mensaje" id="mensaje-pregunta" role="status" aria-live="polite"></p>
+  <button class="boton" id="siguiente" disabled>Ver resultado</button>
+</section>
+
+<section class="panel oculto" id="resultado">
+  <h2 id="titulo-resultado">¡Misión completada!</h2>
+  <p id="texto-resultado"></p>
+  <div class="palabra"><div class="letra lista" id="xp-final">0 XP</div></div>
+  <div class="botones">
+    <button class="boton secundario" id="otra">Jugar otra vez</button>
+    <a class="boton" href="actividad05.html">Siguiente misión →</a>
+    <a class="boton secundario" href="../unidades/unidad1.html">Volver a Unidad 01</a>
+  </div>
+</section>
+
+<footer>MENTE QUEST · Leer, jugar y aprender.</footer>
+</main>
+
+<script src="../script.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  const canvas = document.getElementById("juego");
+  const ctx = canvas.getContext("2d");
+  const $ = id => document.getElementById(id);
+
+  const palabraObjetivo = "LEER";
+  const tam = 20;
+  const celda = canvas.width / tam;
+
+  let serpiente, comida, indiceLetra, puntos, direccion, siguienteDireccion;
+  let estado = "esperando";
+  let temporizador = null;
+  let record = 0;
+  let preguntaRespondida = false;
+  let resultadoGuardado = false;
+
+  try {
+    record = Number(localStorage.getItem("snakeLectorRecord")) || 0;
+  } catch (_) {}
+  $("record").textContent = record;
+
+  function mostrarPalabra() {
+    const contenedor = $("palabra");
+    contenedor.replaceChildren();
+
+    [...palabraObjetivo].forEach((letra, i) => {
+      const caja = document.createElement("div");
+      caja.className = "letra" + (i < indiceLetra ? " lista" : "");
+      caja.textContent = i < indiceLetra ? letra : "?";
+      contenedor.appendChild(caja);
+    });
+
+    $("progreso").textContent = indiceLetra + "/" + palabraObjetivo.length;
+    $("puntos").textContent = puntos;
+    $("record").textContent = record;
+  }
+
+  function dibujar() {
+    ctx.fillStyle = "#061009";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = "#102b19";
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= tam; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * celda, 0);
+      ctx.lineTo(i * celda, canvas.height);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, i * celda);
+      ctx.lineTo(canvas.width, i * celda);
+      ctx.stroke();
+    }
+
+    if (comida && indiceLetra < palabraObjetivo.length) {
+      const x = comida.x * celda;
+      const y = comida.y * celda;
+
+      ctx.shadowColor = "#39ff88";
+      ctx.shadowBlur = 12;
+      ctx.fillStyle = "#39ff88";
+      ctx.beginPath();
+      ctx.roundRect(x + 2, y + 2, celda - 4, celda - 4, 5);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = "#07110c";
+      ctx.font = "bold 15px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(palabraObjetivo[indiceLetra], x + celda / 2, y + celda / 2);
+    }
+
+    serpiente.forEach((parte, i) => {
+      ctx.fillStyle = i === 0 ? "#c7ffda" : "#39ff88";
+      ctx.shadowColor = "#39ff88";
+      ctx.shadowBlur = i === 0 ? 10 : 3;
+      ctx.beginPath();
+      ctx.roundRect(parte.x * celda + 2, parte.y * celda + 2, celda - 4, celda - 4, 5);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      if (i === 0) {
+        ctx.fillStyle = "#07110c";
+        ctx.beginPath();
+        ctx.arc(parte.x * celda + 7, parte.y * celda + 7, 1.7, 0, Math.PI * 2);
+        ctx.arc(parte.x * celda + 13, parte.y * celda + 7, 1.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    if (estado !== "jugando" && estado !== "ganado") {
+      ctx.fillStyle = "#000a";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#39ff88";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "bold 23px Arial";
+      const titulo = estado === "perdido" ? "MISIÓN FALLIDA" :
+                     estado === "pausado" ? "PAUSA" : "SNAKE LECTOR";
+      ctx.fillText(titulo, canvas.width / 2, canvas.height / 2 - 10);
+      ctx.fillStyle = "#effff4";
+      ctx.font = "13px Arial";
+      ctx.fillText(
+        estado === "perdido" ? "Reinicia para intentarlo" :
+        estado === "pausado" ? "Pulsa Reanudar" : "Pulsa Iniciar misión",
+        canvas.width / 2, canvas.height / 2 + 20
+      );
+    }
+  }
+
+  function colocarLetra() {
+    const libres = [];
+    for (let y = 0; y < tam; y++) {
+      for (let x = 0; x < tam; x++) {
+        if (!serpiente.some(p => p.x === x && p.y === y)) libres.push({x, y});
+      }
+    }
+    comida = libres.length ? libres[Math.floor(Math.random() * libres.length)] : null;
+  }
+
+  function detener() {
+    if (temporizador !== null) clearInterval(temporizador);
+    temporizador = null;
+  }
+
+  function iniciarJuego() {
+    detener();
+    serpiente = [{x: 5, y: 10}, {x: 4, y: 10}, {x: 3, y: 10}];
+    direccion = {x: 1, y: 0};
+    siguienteDireccion = {x: 1, y: 0};
+    indiceLetra = 0;
+    puntos = 0;
+    estado = "jugando";
+    preguntaRespondida = false;
+    resultadoGuardado = false;
+
+    $("zona-prueba").classList.add("oculto");
+    $("resultado").classList.add("oculto");
+    $("iniciar").textContent = "Reanudar";
+    $("pausa").textContent = "Pausar";
+    $("estado").textContent = "¡Recoge la letra " + palabraObjetivo[0] + "!";
+
+    colocarLetra();
+    mostrarPalabra();
+    dibujar();
+    temporizador = setInterval(mover, 135);
+  }
+
+  function mover() {
+    if (estado !== "jugando") return;
+    direccion = siguienteDireccion;
+
+    const cabeza = serpiente[0];
+    const nueva = {x: cabeza.x + direccion.x, y: cabeza.y + direccion.y};
+
+    if (nueva.x < 0 || nueva.x >= tam || nueva.y < 0 || nueva.y >= tam) {
+      perder();
+      return;
+    }
+
+    const come = comida && nueva.x === comida.x && nueva.y === comida.y;
+    const cuerpo = come ? serpiente : serpiente.slice(0, -1);
+
+    if (cuerpo.some(p => p.x === nueva.x && p.y === nueva.y)) {
+      perder();
+      return;
+    }
+
+    serpiente.unshift(nueva);
+
+    if (come) {
+      indiceLetra++;
+      puntos += 10;
+
+      if (puntos > record) {
+        record = puntos;
+        try { localStorage.setItem("snakeLectorRecord", String(record)); } catch (_) {}
+      }
+
+      mostrarPalabra();
+
+      if (indiceLetra >= palabraObjetivo.length) {
+        ganar();
+        return;
+      }
+
+      colocarLetra();
+      $("estado").textContent =
+        "¡Letra recogida! Ahora busca: " + palabraObjetivo[indiceLetra];
+    } else {
+      serpiente.pop();
+    }
+
+    dibujar();
+  }
+
+  function perder() {
+    detener();
+    estado = "perdido";
+    $("estado").textContent = "Chocaste. ¡Inténtalo otra vez!";
+    $("iniciar").textContent = "Volver a jugar";
+    dibujar();
+  }
+
+  function ganar() {
+    detener();
+    estado = "ganado";
+    comida = null;
+    $("estado").textContent = "¡Formaste la palabra LEER!";
+    dibujar();
+    $("zona-prueba").classList.remove("oculto");
+    mostrarPregunta();
+    $("zona-prueba").scrollIntoView({behavior: "smooth", block: "start"});
+  }
+
+  function cambiarDireccion(nombre) {
+    if (estado !== "jugando") return;
+    const mapa = {
+      arriba: {x: 0, y: -1},
+      abajo: {x: 0, y: 1},
+      izquierda: {x: -1, y: 0},
+      derecha: {x: 1, y: 0}
+    };
+    const nueva = mapa[nombre];
+    if (!nueva) return;
+
+    if (nueva.x === -direccion.x && nueva.y === -direccion.y) return;
+    siguienteDireccion = nueva;
+  }
+
+  document.addEventListener("keydown", e => {
+    const mapa = {
+      ArrowUp: "arriba", ArrowDown: "abajo",
+      ArrowLeft: "izquierda", ArrowRight: "derecha",
+      w: "arriba", s: "abajo", a: "izquierda", d: "derecha"
+    };
+
+    if (mapa[e.key]) {
+      e.preventDefault();
+      cambiarDireccion(mapa[e.key]);
+    }
+
+    if (e.code === "Space") {
+      e.preventDefault();
+      alternarPausa();
+    }
+  });
+
+  document.querySelectorAll("[data-dir]").forEach(boton => {
+    boton.addEventListener("click", () => cambiarDireccion(boton.dataset.dir));
+  });
+
+  function alternarPausa() {
+    if (estado === "jugando") {
+      estado = "pausado";
+      detener();
+      $("pausa").textContent = "Reanudar";
+      $("iniciar").textContent = "Reanudar";
+      $("estado").textContent = "Juego pausado.";
+      dibujar();
+    } else if (estado === "pausado") {
+      estado = "jugando";
+      $("pausa").textContent = "Pausar";
+      $("iniciar").textContent = "Reanudar";
+      $("estado").textContent = "¡Continúa la misión!";
+      dibujar();
+      temporizador = setInterval(mover, 135);
+    }
+  }
+
+  function mostrarPregunta() {
+    const zona = $("pregunta");
+    zona.replaceChildren();
+
+    const titulo = document.createElement("h3");
+    titulo.textContent = "¿Qué significa comprender una lectura?";
+    zona.appendChild(titulo);
+
+    const opciones = [
+      "Solo pronunciar las palabras rápidamente.",
+      "Entender el mensaje, reflexionar y relacionar ideas.",
+      "Leer únicamente el título."
+    ];
+
+    opciones.forEach((texto, i) => {
+      const boton = document.createElement("button");
+      boton.className = "respuesta";
+      boton.textContent = texto;
+      boton.addEventListener("click", () => {
+        if (preguntaRespondida) return;
+        preguntaRespondida = true;
+
+        const correcto = i === 1;
+        $("mensaje-pregunta").textContent = correcto
+          ? "¡Correcto! Comprender implica interpretar y reflexionar."
+          : "La respuesta correcta es entender el mensaje y reflexionar.";
+        $("mensaje-pregunta").className = "mensaje " + (correcto ? "exito" : "");
+        boton.classList.add("elegida");
+        zona.querySelectorAll("button").forEach(b => b.disabled = true);
+
+        $("siguiente").disabled = false;
+        $("siguiente").onclick = () => mostrarResultado(correcto);
+      });
+      zona.appendChild(boton);
+    });
+
+    $("siguiente").disabled = true;
+  }
+
+  function mostrarResultado(correcto) {
+    $("zona-prueba").classList.add("oculto");
+    $("resultado").classList.remove("oculto");
+
+    const xp = correcto ? 100 : 50;
+    $("titulo-resultado").textContent = correcto ? "¡Excelente, explorador!" : "¡Misión completada!";
+    $("texto-resultado").textContent =
+      "Formaste la palabra LEER y terminaste la prueba de comprensión.";
+    $("xp-final").textContent = xp + " XP";
+
+    if (!resultadoGuardado) {
+      resultadoGuardado = true;
+      if (window.MenteQuest &&
+          typeof window.MenteQuest.completarActividad === "function") {
+        window.MenteQuest.completarActividad("actividad04", xp);
+      }
+    }
+
+    $("resultado").scrollIntoView({behavior: "smooth", block: "start"});
+  }
+
+  $("iniciar").addEventListener("click", () => {
+    if (estado === "pausado") alternarPausa();
+    else iniciarJuego();
+  });
+
+  $("pausa").addEventListener("click", alternarPausa);
+  $("reiniciar").addEventListener("click", iniciarJuego);
+  $("otra").addEventListener("click", iniciarJuego);
+
+  // Preparar la pantalla inicial.
+  serpiente = [{x: 5, y: 10}, {x: 4, y: 10}, {x: 3, y: 10}];
+  comida = {x: 12, y: 10};
+  indiceLetra = 0;
+  puntos = 0;
+  direccion = {x: 1, y: 0};
+  siguienteDireccion = {x: 1, y: 0};
+  mostrarPalabra();
+  dibujar();
+})();
+</script>
+</body>
+</html>

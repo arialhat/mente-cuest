@@ -1,0 +1,359 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 10 | Escape lector</title>
+<style>
+:root {
+    --fondo: #070b09;
+    --panel: #111a14;
+    --verde: #39ff88;
+    --texto: #edf5ef;
+    --gris: #aab7ad;
+    --rojo: #ff7777;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    padding: 20px;
+    background: radial-gradient(circle at top, #193522, var(--fondo) 70%);
+    color: var(--texto);
+    font-family: Arial, sans-serif;
+}
+.contenedor { max-width: 850px; margin: auto; }
+header { text-align: center; margin-bottom: 25px; }
+.etiqueta { color: var(--verde); letter-spacing: 3px; font-size: 12px; }
+h1 { font-size: clamp(28px, 5vw, 42px); margin: 12px 0; }
+p { line-height: 1.65; }
+.panel {
+    background: var(--panel);
+    border: 1px solid #344b3a;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 18px;
+}
+.estado {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: var(--gris);
+}
+.estado strong { color: var(--verde); }
+.progreso {
+    height: 9px;
+    background: #29352d;
+    border-radius: 20px;
+    margin: 18px 0 24px;
+    overflow: hidden;
+}
+.progreso div {
+    height: 100%;
+    width: 0;
+    background: var(--verde);
+    transition: width .3s;
+}
+.historia {
+    background: #17231a;
+    border-left: 3px solid var(--verde);
+    padding: 14px;
+    border-radius: 6px;
+    margin: 18px 0;
+    line-height: 1.7;
+}
+.pregunta {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+.opciones { display: grid; gap: 10px; }
+.opcion {
+    text-align: left;
+    padding: 14px;
+    border: 1px solid #48584c;
+    border-radius: 8px;
+    background: #18221b;
+    color: var(--texto);
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.opcion:hover:not(:disabled) {
+    border-color: var(--verde);
+    background: #203127;
+}
+.opcion:disabled { cursor: default; opacity: .9; }
+.opcion.correcta { border-color: var(--verde); }
+.opcion.incorrecta { border-color: var(--rojo); }
+#mensaje {
+    min-height: 28px;
+    color: var(--gris);
+    line-height: 1.6;
+}
+.accion {
+    display: inline-block;
+    border: 1px solid var(--verde);
+    border-radius: 7px;
+    padding: 12px 17px;
+    background: var(--verde);
+    color: #071009;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+.secundario {
+    background: transparent;
+    color: var(--texto);
+    border-color: #526057;
+}
+.controles { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+#siguiente { display: none; }
+#final {
+    display: none;
+    text-align: center;
+    border: 1px solid var(--verde);
+    background: #102017;
+}
+#final h2 { color: var(--verde); font-size: 30px; }
+.puerta {
+    border: 1px solid #405246;
+    padding: 20px;
+    margin: 18px 0;
+    border-radius: 10px;
+    background: #0c120e;
+}
+.icono { font-size: 36px; }
+.pie { text-align: center; color: #87958b; font-size: 12px; margin: 25px 0; }
+@media(max-width: 500px) {
+    body { padding: 10px; }
+    .panel { padding: 14px; }
+    .controles > * { width: 100%; text-align: center; }
+}
+</style>
+</head>
+<body>
+<div class="contenedor">
+
+<header>
+    <div class="etiqueta">MENTE QUEST // PROTOCOLO DE ESCAPE</div>
+    <h1>Escape lector</h1>
+    <p>La instalación está bloqueada. Usa tu comprensión lectora para abrir las cinco puertas.</p>
+</header>
+
+<section class="panel" id="juego">
+    <div class="estado">
+        <span>PUERTA: <strong id="numero">1 / 5</strong></span>
+        <span>ACIERTOS: <strong id="aciertos">0</strong></span>
+        <span>ERRORES: <strong id="errores">0</strong></span>
+    </div>
+
+    <div class="progreso"><div id="barra"></div></div>
+
+    <div class="puerta">
+        <div class="icono" id="icono">🔒</div>
+        <h2 id="titulo">Puerta 01: El mensaje oculto</h2>
+        <p id="historia" class="historia"></p>
+        <div class="pregunta" id="pregunta"></div>
+        <div class="opciones" id="opciones"></div>
+        <p id="mensaje" role="status" aria-live="polite">Lee con atención antes de elegir.</p>
+        <button class="accion" id="siguiente">Abrir siguiente puerta →</button>
+    </div>
+</section>
+
+<section class="panel" id="final">
+    <div class="icono">🏆</div>
+    <h2>¡ESCAPE COMPLETADO!</h2>
+    <p>Has superado las cinco puertas y demostrado tus habilidades de comprensión lectora.</p>
+    <p id="resumen"></p>
+    <p id="recompensa">Recompensa: 100 XP</p>
+    <a class="accion" href="../index.html">Volver a la base principal</a>
+    <a class="accion secundario" href="../unidades/unidad2.html">Repasar Unidad 02</a>
+</section>
+
+<div class="controles">
+    <a class="accion secundario" href="actividad09.html">← Actividad 09</a>
+    <a class="accion secundario" href="../index.html">Inicio</a>
+</div>
+
+<footer class="pie">MENTE QUEST · ACTIVIDAD 10 · DESAFÍO FINAL</footer>
+</div>
+
+<script src="../script.js"></script>
+<script>
+const misiones = [
+    {
+        titulo: "Puerta 01: El mensaje oculto",
+        historia: "En la biblioteca, Mateo encuentra un aviso: «Leer diariamente permite conocer nuevas ideas, mejorar el vocabulario y comprender mejor el mundo».",
+        pregunta: "¿Cuál es la idea principal del aviso?",
+        opciones: [
+            "La biblioteca tiene muchos libros.",
+            "Leer con frecuencia ofrece varios beneficios.",
+            "Mateo encontró un aviso.",
+            "El vocabulario solo se aprende en la escuela."
+        ],
+        correcta: 1,
+        explicacion: "Correcto. Las demás frases son detalles o afirmaciones que no representan el mensaje central."
+    },
+    {
+        titulo: "Puerta 02: La pista invisible",
+        historia: "Sofía salió de casa con el cielo despejado. Al regresar, su ropa estaba mojada y llevaba un paraguas cerrado. En la entrada había un charco.",
+        pregunta: "¿Qué conclusión está mejor apoyada por las pistas?",
+        opciones: [
+            "Sofía estuvo nadando en una alberca.",
+            "Sofía olvidó dónde vivía.",
+            "Probablemente llovió mientras Sofía estaba fuera.",
+            "Sofía nunca había visto un paraguas."
+        ],
+        correcta: 2,
+        explicacion: "Las pistas permiten inferir que llovió, aunque el texto no lo afirma directamente."
+    },
+    {
+        titulo: "Puerta 03: El texto incompleto",
+        historia: "Una escuela instaló recipientes para separar residuos. Después de varias semanas, los estudiantes comenzaron a clasificar papel, plástico y restos orgánicos. El patio se mantuvo más limpio.",
+        pregunta: "¿Cuál sería el mejor resumen?",
+        opciones: [
+            "La escuela compró recipientes de diferentes tamaños.",
+            "Los estudiantes salen al patio durante el recreo.",
+            "Separar residuos ayudó a mantener más limpio el patio escolar.",
+            "El papel y el plástico son materiales idénticos."
+        ],
+        correcta: 2,
+        explicacion: "Un resumen conserva el mensaje esencial y elimina detalles secundarios."
+    },
+    {
+        titulo: "Puerta 04: La intención del autor",
+        historia: "«Cierra la llave mientras te cepillas los dientes. Con esta sencilla acción puedes evitar desperdiciar agua todos los días».",
+        pregunta: "¿Qué pretende principalmente el autor?",
+        opciones: [
+            "Entretener con una historia fantástica.",
+            "Convencer al lector de ahorrar agua.",
+            "Describir cómo se fabrica una llave.",
+            "Narrar unas vacaciones."
+        ],
+        correcta: 1,
+        explicacion: "El texto propone una acción y explica su beneficio para persuadir al lector."
+    },
+    {
+        titulo: "Puerta 05: La decisión final",
+        historia: "Lee el fragmento: «Aunque el camino parecía complicado, Elena revisó las instrucciones, comparó las pistas y corrigió su respuesta. Finalmente encontró la salida»",
+        pregunta: "¿Qué característica de Elena se destaca mejor en el fragmento?",
+        opciones: [
+            "Actúa sin observar las pistas.",
+            "Abandona cuando aparece una dificultad.",
+            "Resuelve el problema con atención y perseverancia.",
+            "Depende de que alguien le dé la respuesta."
+        ],
+        correcta: 2,
+        explicacion: "Elena revisa, compara y corrige: sus acciones muestran atención y perseverancia."
+    }
+];
+
+let actual = 0;
+let aciertos = 0;
+let errores = 0;
+let respondida = false;
+let finalizado = false;
+
+const numero = document.getElementById("numero");
+const aciertosTexto = document.getElementById("aciertos");
+const erroresTexto = document.getElementById("errores");
+const barra = document.getElementById("barra");
+const titulo = document.getElementById("titulo");
+const historia = document.getElementById("historia");
+const pregunta = document.getElementById("pregunta");
+const opciones = document.getElementById("opciones");
+const mensaje = document.getElementById("mensaje");
+const siguiente = document.getElementById("siguiente");
+
+function mostrarMision() {
+    const m = misiones[actual];
+    respondida = false;
+
+    numero.textContent = `${actual + 1} / ${misiones.length}`;
+    titulo.textContent = m.titulo;
+    historia.textContent = m.historia;
+    pregunta.textContent = m.pregunta;
+    opciones.innerHTML = "";
+    mensaje.textContent = "Lee con atención y selecciona una respuesta.";
+    mensaje.style.color = "";
+    siguiente.style.display = "none";
+    document.getElementById("icono").textContent = "🔒";
+
+    m.opciones.forEach((texto, indice) => {
+        const boton = document.createElement("button");
+        boton.className = "opcion";
+        boton.textContent = `${String.fromCharCode(65 + indice)}. ${texto}`;
+        boton.addEventListener("click", () => responder(indice, boton));
+        opciones.appendChild(boton);
+    });
+
+    barra.style.width = `${(actual / misiones.length) * 100}%`;
+}
+
+function responder(indice, botonElegido) {
+    if (respondida || finalizado) return;
+    respondida = true;
+
+    const m = misiones[actual];
+    const botones = [...opciones.querySelectorAll("button")];
+    botones.forEach(b => b.disabled = true);
+
+    if (indice === m.correcta) {
+        aciertos++;
+        botonElegido.classList.add("correcta");
+        mensaje.textContent = "¡Respuesta correcta! " + m.explicacion;
+        mensaje.style.color = "#39ff88";
+        document.getElementById("icono").textContent = "🔓";
+    } else {
+        errores++;
+        botonElegido.classList.add("incorrecta");
+        botones[m.correcta].classList.add("correcta");
+        mensaje.textContent = "Respuesta incorrecta. " + m.explicacion;
+        mensaje.style.color = "#ff7777";
+        document.getElementById("icono").textContent = "⚠️";
+    }
+
+    aciertosTexto.textContent = aciertos;
+    erroresTexto.textContent = errores;
+    barra.style.width = `${((actual + 1) / misiones.length) * 100}%`;
+
+    siguiente.textContent = actual === misiones.length - 1
+        ? "Completar escape →"
+        : "Abrir siguiente puerta →";
+    siguiente.style.display = "inline-block";
+}
+
+siguiente.addEventListener("click", () => {
+    if (!respondida || finalizado) return;
+
+    if (actual < misiones.length - 1) {
+        actual++;
+        mostrarMision();
+    } else {
+        completarEscape();
+    }
+});
+
+function completarEscape() {
+    finalizado = true;
+    document.getElementById("juego").style.display = "none";
+    document.getElementById("final").style.display = "block";
+    document.getElementById("resumen").textContent =
+        `Resultado: ${aciertos} de ${misiones.length} respuestas correctas y ${errores} errores.`;
+
+    const recompensa = window.MenteQuest
+        ? window.MenteQuest.completarActividad("actividad10", 100)
+        : false;
+
+    document.getElementById("recompensa").textContent = recompensa
+        ? "¡Has ganado 100 XP y completado la última misión!"
+        : "Has terminado el desafío. Si ya lo completaste anteriormente, no se sumarán XP duplicados.";
+}
+
+mostrarMision();
+</script>
+</body>
+</html>
+```

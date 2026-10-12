@@ -1,0 +1,691 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actividad 01 | MENTE QUEST</title>
+  <script src="../script.js" defer></script>
+
+  <style>
+    :root {
+      --verde: #39ff88;
+      --fondo: #070b09;
+      --panel: #101914;
+      --texto: #effff4;
+      --gris: #a5b8aa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at top, #123322, transparent 55%), var(--fondo);
+      color: var(--texto);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 16px 5%;
+      background: #050c08;
+      border-bottom: 1px solid #244b34;
+    }
+
+    .logo {
+      color: var(--verde);
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    a {
+      color: var(--verde);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      width: min(950px, 92%);
+      margin: 28px auto;
+    }
+
+    .etiqueta {
+      color: var(--verde);
+      font-size: .78rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin: 10px 0;
+    }
+
+    h1 span {
+      color: var(--verde);
+    }
+
+    h2 {
+      font-size: clamp(1.15rem, 3vw, 1.5rem);
+    }
+
+    .intro {
+      color: var(--gris);
+      line-height: 1.7;
+    }
+
+    .panel {
+      margin-top: 22px;
+      padding: clamp(15px, 3vw, 25px);
+      background: var(--panel);
+      border: 1px solid #28563a;
+      border-radius: 18px;
+    }
+
+    /* VIDEO ADAPTABLE */
+    .video-panel {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto 25px;
+      padding: 16px;
+      background: #0a120d;
+      border: 1px solid #28563a;
+      border-radius: 14px;
+    }
+
+    .video-panel h2 {
+      margin: 10px 0;
+    }
+
+    .video-panel video {
+      display: block;
+      width: 100%;
+      max-width: 560px;
+      max-height: 315px;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      margin: 15px auto;
+      background: #000;
+      border: 1px solid var(--verde);
+      border-radius: 10px;
+    }
+
+    .fila {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* ROMPECABEZAS */
+    .tablero {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+      width: min(100%, 510px);
+      margin: 22px auto;
+      padding: 7px;
+      background: #020503;
+      border: 2px solid var(--verde);
+      border-radius: 12px;
+      box-shadow: 0 0 22px #39ff8818;
+    }
+
+    .pieza {
+      width: 100%;
+      aspect-ratio: 1;
+      padding: 0;
+      background-image: url("../img/jardin-magico.jpg");
+      background-size: 300% 300%;
+      background-repeat: no-repeat;
+      background-color: #183c28;
+      border: 1px solid #39ff8880;
+      border-radius: 4px;
+      cursor: grab;
+      touch-action: manipulation;
+    }
+
+    .pieza:focus-visible,
+    .pieza.seleccionada {
+      outline: 3px solid white;
+      outline-offset: -4px;
+      filter: brightness(1.2);
+    }
+
+    .pieza.correcta {
+      border-color: var(--verde);
+    }
+
+    .ayuda {
+      color: var(--gris);
+      text-align: center;
+      line-height: 1.6;
+      font-size: .92rem;
+    }
+
+    .botones {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .accion {
+      border: 1px solid var(--verde);
+      border-radius: 10px;
+      padding: 12px 18px;
+      background: var(--verde);
+      color: #06130a;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .secundario {
+      background: transparent;
+      color: var(--verde);
+    }
+
+    .accion:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .mensaje {
+      min-height: 25px;
+      text-align: center;
+      line-height: 1.5;
+      color: var(--verde);
+      font-weight: bold;
+    }
+
+    /* CUESTIONARIO */
+    #cuestionario {
+      display: none;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #28563a;
+    }
+
+    .pregunta {
+      margin: 17px 0;
+      padding: 17px;
+      background: #0a120d;
+      border: 1px solid #23442e;
+      border-radius: 12px;
+    }
+
+    .pregunta p {
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .opcion {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 5px;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .opcion input {
+      margin-top: 4px;
+      accent-color: var(--verde);
+    }
+
+    #resultado {
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    footer {
+      padding: 25px 12px;
+      text-align: center;
+      color: var(--gris);
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 14px 4%;
+      }
+
+      main {
+        margin: 20px auto;
+      }
+
+      .video-panel {
+        padding: 12px;
+      }
+
+      .video-panel video {
+        max-height: 220px;
+      }
+
+      .tablero {
+        gap: 3px;
+        padding: 4px;
+      }
+
+      .accion {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">◈ MENTE QUEST</div>
+    <a href="../unidades/unidad1.html">← Volver a Unidad 01</a>
+  </header>
+
+  <main>
+    <div class="etiqueta">Unidad 01 / Actividad 01</div>
+    <h1>El poder de <span>leer</span></h1>
+
+    <p class="intro">
+      Mira el video, reconstruye la imagen y responde el cuestionario
+      para completar tu primera misión.
+    </p>
+
+    <!-- VIDEO -->
+    <section class="video-panel">
+      <div class="etiqueta">Material de aprendizaje</div>
+      <h2>🎬 Cinco razones para leer más</h2>
+
+      <p class="intro">
+        Presta atención a los cinco beneficios que explica el video.
+        Después demostrarás lo que aprendiste.
+      </p>
+
+      <video controls preload="metadata" playsinline>
+        <source src="../videos/video-lectura.mp4" type="video/mp4">
+        Tu navegador no puede reproducir este video.
+      </video>
+
+      <p class="ayuda">
+        Puedes pausar o repetir el video si necesitas revisar alguna información.
+      </p>
+    </section>
+
+    <!-- ROMPECABEZAS -->
+    <section class="panel">
+      <div class="fila">
+        <div>
+          <div class="etiqueta">Misión de observación</div>
+          <h2>Reconstruye la imagen</h2>
+        </div>
+        <strong class="etiqueta" id="estado">0 de 9 correctas</strong>
+      </div>
+
+      <p class="intro">
+        Selecciona dos piezas para intercambiarlas o arrastra una pieza
+        sobre otra. En teléfono, puedes tocar dos piezas.
+      </p>
+
+      <div class="tablero" id="tablero"
+           aria-label="Rompecabezas de nueve piezas"></div>
+
+      <p class="ayuda">
+        Observa los colores, las formas y los bordes para descubrir
+        dónde encaja cada fragmento.
+      </p>
+
+      <div class="botones">
+        <button class="accion" id="comprobar">
+          Comprobar rompecabezas
+        </button>
+        <button class="accion secundario" id="reiniciar">
+          Mezclar de nuevo
+        </button>
+      </div>
+
+      <p class="mensaje" id="mensaje" role="status" aria-live="polite"></p>
+
+      <!-- CUESTIONARIO DEL VIDEO -->
+      <div id="cuestionario">
+        <div class="etiqueta">Desafío audiovisual desbloqueado</div>
+        <h2>¿Qué aprendiste del video?</h2>
+
+        <p class="intro">
+          Contesta las cinco preguntas según la información del video.
+          Cada respuesta correcta vale 10 XP.
+        </p>
+
+        <form id="formulario">
+          <div class="pregunta">
+            <p>1. Según el video, ¿cómo puede ayudar la lectura frente a ciertas enfermedades cerebrales?</p>
+
+            <label class="opcion">
+              <input type="radio" name="p1" value="a" required>
+              A) Las elimina por completo y garantiza que nunca aparezcan.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p1" value="b">
+              B) Puede contribuir a prevenirlas o a frenar el avance de algunas enfermedades neurodegenerativas.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p1" value="c">
+              C) Evita que el cerebro necesite descansar.
+            </label>
+          </div>
+
+          <div class="pregunta">
+            <p>2. ¿Qué relación establece el video entre lectura y capacidad mental?</p>
+
+            <label class="opcion">
+              <input type="radio" name="p2" value="a" required>
+              A) La lectura favorece la conectividad cerebral y el procesamiento de información.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p2" value="b">
+              B) Leer hace innecesario aprender cosas nuevas.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p2" value="c">
+              C) Leer solo mejora la capacidad de reconocer colores.
+            </label>
+          </div>
+
+          <div class="pregunta">
+            <p>3. ¿Por qué el video recomienda leer diferentes géneros?</p>
+
+            <label class="opcion">
+              <input type="radio" name="p3" value="a" required>
+              A) Para leer siempre el mismo tipo de información.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p3" value="b">
+              B) Para terminar todos los libros más rápido.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p3" value="c">
+              C) Para ampliar la cultura general en diferentes ámbitos.
+            </label>
+          </div>
+
+          <div class="pregunta">
+            <p>4. ¿Qué significa que la lectura puede mejorar la empatía?</p>
+
+            <label class="opcion">
+              <input type="radio" name="p4" value="a" required>
+              A) Que siempre debemos estar de acuerdo con los personajes.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p4" value="b">
+              B) Que podemos comprender mejor las experiencias y los sentimientos de otras personas.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p4" value="c">
+              C) Que debemos memorizar todos los libros.
+            </label>
+          </div>
+
+          <div class="pregunta">
+            <p>5. Según el video, ¿cómo puede la lectura hacer que una persona sea más interesante?</p>
+
+            <label class="opcion">
+              <input type="radio" name="p5" value="a" required>
+              A) Aporta conocimientos y ayuda a aprender maneras de contar historias.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p5" value="b">
+              B) Permite conversar sin escuchar a los demás.
+            </label>
+
+            <label class="opcion">
+              <input type="radio" name="p5" value="c">
+              C) Hace innecesario compartir ideas.
+            </label>
+          </div>
+
+          <div class="botones">
+            <button class="accion" type="submit">Finalizar misión</button>
+          </div>
+        </form>
+
+        <div id="resultado" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>MENTE QUEST · Aprende, comprende y avanza.</footer>
+
+  <script>
+    const tablero = document.getElementById("tablero");
+    const estado = document.getElementById("estado");
+    const mensaje = document.getElementById("mensaje");
+    const cuestionario = document.getElementById("cuestionario");
+    const formulario = document.getElementById("formulario");
+    const resultado = document.getElementById("resultado");
+    const botonComprobar = document.getElementById("comprobar");
+    const botonReiniciar = document.getElementById("reiniciar");
+
+    let piezas = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    let seleccionada = null;
+    let resuelto = false;
+    let enviado = false;
+
+    function mezclar() {
+      for (let i = piezas.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [piezas[i], piezas[j]] = [piezas[j], piezas[i]];
+      }
+
+      if (piezas.every((p, i) => p === i)) {
+        [piezas[0], piezas[1]] = [piezas[1], piezas[0]];
+      }
+    }
+
+    function dibujar() {
+      tablero.innerHTML = "";
+
+      piezas.forEach((id, posicion) => {
+        const pieza = document.createElement("button");
+        const columna = id % 3;
+        const fila = Math.floor(id / 3);
+
+        pieza.type = "button";
+        pieza.className = "pieza";
+        pieza.draggable = !resuelto;
+        pieza.setAttribute(
+          "aria-label",
+          "Fragmento de imagen, posición " + (posicion + 1)
+        );
+
+        pieza.style.backgroundPosition =
+          (columna * 50) + "% " + (fila * 50) + "%";
+
+        if (id === posicion) pieza.classList.add("correcta");
+        if (seleccionada === posicion) pieza.classList.add("seleccionada");
+
+        pieza.addEventListener("click", () => {
+          if (resuelto) return;
+
+          if (seleccionada === null) {
+            seleccionada = posicion;
+            mensaje.textContent =
+              "Pieza seleccionada. Elige otra para intercambiarlas.";
+          } else if (seleccionada === posicion) {
+            seleccionada = null;
+            mensaje.textContent = "Selección cancelada.";
+          } else {
+            intercambiar(seleccionada, posicion);
+            return;
+          }
+
+          dibujar();
+        });
+
+        pieza.addEventListener("dragstart", evento => {
+          evento.dataTransfer.setData("text/plain", String(posicion));
+          evento.dataTransfer.effectAllowed = "move";
+        });
+
+        pieza.addEventListener("dragover", evento => {
+          evento.preventDefault();
+        });
+
+        pieza.addEventListener("drop", evento => {
+          evento.preventDefault();
+
+          const origen = Number(
+            evento.dataTransfer.getData("text/plain")
+          );
+
+          if (Number.isInteger(origen) &&
+              origen >= 0 &&
+              origen < piezas.length) {
+            intercambiar(origen, posicion);
+          }
+        });
+
+        tablero.appendChild(pieza);
+      });
+
+      const correctas = piezas.filter((p, i) => p === i).length;
+      estado.textContent = correctas + " de 9 correctas";
+    }
+
+    function intercambiar(origen, destino) {
+      if (resuelto || origen === destino) {
+        seleccionada = null;
+        dibujar();
+        return;
+      }
+
+      [piezas[origen], piezas[destino]] =
+        [piezas[destino], piezas[origen]];
+
+      seleccionada = null;
+      mensaje.textContent = "Intercambio realizado. ¡Sigue intentando!";
+      dibujar();
+    }
+
+    botonComprobar.addEventListener("click", () => {
+      if (piezas.every((p, i) => p === i)) {
+        resuelto = true;
+        seleccionada = null;
+        dibujar();
+
+        mensaje.textContent =
+          "¡Rompecabezas completado! Has desbloqueado el cuestionario.";
+
+        cuestionario.style.display = "block";
+        botonComprobar.disabled = true;
+        botonReiniciar.disabled = true;
+
+        cuestionario.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      } else {
+        const correctas = piezas.filter((p, i) => p === i).length;
+        mensaje.textContent =
+          "Aún faltan piezas. Tienes " + correctas + " de 9 en su lugar.";
+      }
+    });
+
+    botonReiniciar.addEventListener("click", () => {
+      if (resuelto) return;
+
+      seleccionada = null;
+      mezclar();
+      mensaje.textContent = "Piezas mezcladas. ¡Vuelve a intentarlo!";
+      dibujar();
+    });
+
+    formulario.addEventListener("submit", evento => {
+      evento.preventDefault();
+
+      if (!resuelto || enviado) return;
+
+      const respuestasCorrectas = {
+        p1: "b",
+        p2: "a",
+        p3: "c",
+        p4: "b",
+        p5: "a"
+      };
+
+      const datos = new FormData(formulario);
+      let aciertos = 0;
+
+      for (const pregunta in respuestasCorrectas) {
+        if (datos.get(pregunta) === respuestasCorrectas[pregunta]) {
+          aciertos++;
+        }
+      }
+
+      const xpPreguntas = aciertos * 10;
+      const xpTotal = 50 + xpPreguntas;
+
+      enviado = true;
+
+      formulario.querySelectorAll("input, button").forEach(elemento => {
+        elemento.disabled = true;
+      });
+
+      let textoXP;
+
+      if (window.MenteQuest) {
+        const agregado = window.MenteQuest.completarActividad(
+          "actividad01",
+          xpTotal
+        );
+
+        textoXP = agregado
+          ? "Se han registrado " + xpTotal + " XP en tu perfil."
+          : "Esta actividad ya estaba registrada; no se añadieron XP adicionales.";
+      } else {
+        textoXP = "Puntuación obtenida: " + xpTotal + " XP.";
+      }
+
+      resultado.innerHTML =
+        "<h3>¡Misión completada!</h3>" +
+        "<p>Respuestas correctas: <strong>" + aciertos + " de 5</strong>.</p>" +
+        "<p>Rompecabezas: 50 XP · Preguntas: " + xpPreguntas + " XP.</p>" +
+        "<p>" + textoXP + "</p>" +
+        '<p><a href="../unidades/unidad1.html">← Volver a Unidad 01</a></p>' +
+        '<p><a href="actividad02.html">Continuar a la Actividad 02 →</a></p>';
+    });
+
+    // Comprobar que la imagen del rompecabezas exista.
+    const imagenPrueba = new Image();
+
+    imagenPrueba.onerror = () => {
+      mensaje.textContent =
+        "No se encontró jardin-magico.jpg. Comprueba la carpeta img.";
+    };
+
+    imagenPrueba.src = "../img/jardin-magico.jpg";
+
+    mezclar();
+    dibujar();
+  </script>
+</body>
+</html>
+```
